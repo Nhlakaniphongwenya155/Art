@@ -1,0 +1,3352 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Nhlaka the artist · Atelier</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=Inter:opsz,wght@14..32,200;14..32,300;14..32,400;14..32,500;14..32,600&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
+    <style>
+        /* ═══════════════════════════════════════════════
+           RESET & BASE
+           ═══════════════════════════════════════════════ */
+        *,
+        *::before,
+        *::after {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        html {
+            scroll-behavior: smooth;
+        }
+        body {
+            font-family: 'Inter', 'Helvetica Neue', sans-serif;
+            font-weight: 300;
+            color: #f5f0eb;
+            background: #0c0b0a;
+            line-height: 1.6;
+            -webkit-font-smoothing: antialiased;
+            overflow-x: hidden;
+            cursor: default;
+            position: relative;
+        }
+        :root {
+            --gold: #b8a48c;
+            --gold-light: #d4c4b0;
+            --gold-dark: #8a7a66;
+            --charcoal: #1a1816;
+            --ivory: #faf8f6;
+            --warm-white: #f5f0eb;
+            --shadow-heavy: 0 30px 80px rgba(0, 0, 0, 0.7);
+            --toast-bg: #1a1816;
+            --transition-smooth: cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            --sold-color: #b8a48c;
+            --available-color: #8a9a7a;
+            --notforsale-color: #7a7a7a;
+        }
+        ::selection {
+            background: var(--gold);
+            color: #fff;
+        }
+        ::-webkit-scrollbar {
+            width: 5px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #1a1816;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: var(--gold-dark);
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--gold);
+        }
+
+        /* ─── Background slideshow ─── */
+        .bg-slideshow {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -3;
+            overflow: hidden;
+        }
+        .bg-slideshow .slide {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-size: cover;
+            background-position: center;
+            opacity: 0;
+            transition: opacity 3s ease-in-out;
+            will-change: opacity;
+            transform: scale(1.02);
+        }
+        .bg-slideshow .slide.active {
+            opacity: 1;
+        }
+        .bg-vignette {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -2;
+            background: radial-gradient(ellipse at center, rgba(12, 11, 10, 0.20) 0%, rgba(12, 11, 10, 0.75) 100%);
+            pointer-events: none;
+        }
+
+        /* ─── Particles ─── */
+        #particles-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            pointer-events: none;
+        }
+
+        /* ─── Container ─── */
+        .container {
+            max-width: 1440px;
+            margin: 0 auto;
+            padding: 0 2.5rem;
+            position: relative;
+            z-index: 1;
+            background: rgba(12, 11, 10, 0.25);
+            backdrop-filter: blur(2px);
+            min-height: 100vh;
+            box-shadow: 0 0 80px rgba(0, 0, 0, 0.4);
+        }
+
+        /* ─── Loader ─── */
+        .loader {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #0c0b0a;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 999999;
+            transition: opacity 1.2s ease, visibility 1.2s ease;
+        }
+        .loader.hidden {
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none;
+        }
+        .loader-ring {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            border: 2px solid rgba(184, 164, 140, 0.1);
+            border-top: 2px solid var(--gold);
+            animation: spin 1.2s cubic-bezier(0.6, 0, 0.4, 1) infinite;
+        }
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+        .loader-text {
+            margin-top: 1.5rem;
+            font-family: 'Playfair Display', serif;
+            font-weight: 400;
+            font-size: 0.9rem;
+            letter-spacing: 0.3em;
+            color: rgba(245, 240, 235, 0.3);
+        }
+        .loader-progress {
+            margin-top: 0.8rem;
+            width: 160px;
+            height: 2px;
+            background: rgba(184, 164, 140, 0.1);
+            border-radius: 2px;
+            overflow: hidden;
+        }
+        .loader-progress-bar {
+            height: 100%;
+            width: 0%;
+            background: var(--gold);
+            border-radius: 2px;
+            transition: width 0.3s ease;
+        }
+
+        /* ─── Toast ─── */
+        .toast-container {
+            position: fixed;
+            top: 2rem;
+            right: 2rem;
+            z-index: 999999;
+            display: flex;
+            flex-direction: column;
+            gap: 0.6rem;
+            pointer-events: none;
+        }
+        .toast {
+            background: var(--toast-bg);
+            border: 1px solid rgba(184, 164, 140, 0.2);
+            border-left: 3px solid var(--gold);
+            color: #f5f0eb;
+            padding: 0.7rem 1.4rem;
+            border-radius: 4px;
+            font-family: 'Inter', sans-serif;
+            font-size: 0.7rem;
+            letter-spacing: 0.06em;
+            backdrop-filter: blur(16px);
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.6);
+            animation: toastIn 0.5s var(--transition-smooth) forwards,
+                toastOut 0.5s var(--transition-smooth) 2.8s forwards;
+            pointer-events: auto;
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+            max-width: 380px;
+        }
+        .toast i {
+            color: var(--gold);
+            font-size: 0.8rem;
+        }
+        @keyframes toastIn {
+            from {
+                opacity: 0;
+                transform: translateX(40px) scale(0.95);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0) scale(1);
+            }
+        }
+        @keyframes toastOut {
+            from {
+                opacity: 1;
+                transform: translateX(0) scale(1);
+            }
+            to {
+                opacity: 0;
+                transform: translateX(40px) scale(0.95);
+            }
+        }
+
+        /* ─── Scroll-to-top ─── */
+        .scroll-top-btn {
+            position: fixed;
+            bottom: 2rem;
+            left: 2rem;
+            z-index: 998;
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            background: rgba(12, 11, 10, 0.5);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(184, 164, 140, 0.12);
+            color: rgba(245, 240, 235, 0.35);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.9rem;
+            transition: all 0.4s ease;
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(20px);
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.3);
+        }
+        .scroll-top-btn.visible {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+        .scroll-top-btn:hover {
+            border-color: var(--gold);
+            color: var(--gold-light);
+            background: rgba(184, 164, 140, 0.08);
+            transform: translateY(-3px);
+            box-shadow: 0 8px 40px rgba(184, 164, 140, 0.1);
+        }
+        .scroll-top-btn .progress-ring {
+            position: absolute;
+            top: -4px;
+            left: -4px;
+            width: calc(100% + 8px);
+            height: calc(100% + 8px);
+            transform: rotate(-90deg);
+            pointer-events: none;
+        }
+        .scroll-top-btn .progress-ring circle {
+            fill: none;
+            stroke: var(--gold);
+            stroke-width: 1.5;
+            stroke-dasharray: 138;
+            stroke-dashoffset: 138;
+            transition: stroke-dashoffset 0.15s ease;
+            opacity: 0.6;
+        }
+
+        /* ─── Typography ─── */
+        .logo {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.9rem;
+            font-weight: 500;
+            letter-spacing: 0.08em;
+            color: #f5f0eb;
+            text-decoration: none;
+            border-bottom: 2px solid transparent;
+            transition: border-color 0.4s, color 0.4s;
+            text-shadow: 0 2px 12px rgba(0, 0, 0, 0.5);
+            position: relative;
+        }
+        .logo::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: var(--gold);
+            transition: width 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        }
+        .logo:hover::after {
+            width: 100%;
+        }
+        .logo:hover {
+            color: var(--gold-light);
+        }
+
+        .section-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 2.4rem;
+            font-weight: 400;
+            letter-spacing: 0.08em;
+            margin-bottom: 2.5rem;
+            color: #f5f0eb;
+            border-bottom: 1px solid rgba(184, 164, 140, 0.12);
+            padding-bottom: 0.6rem;
+            display: inline-block;
+            text-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+            position: relative;
+        }
+        .section-title .gold {
+            color: var(--gold-light);
+        }
+        .section-title::before {
+            content: '✦ ';
+            color: var(--gold-dark);
+            font-size: 1.4rem;
+        }
+
+        /* ─── Header ─── */
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1.8rem 0 1.2rem;
+            border-bottom: 1px solid rgba(184, 164, 140, 0.08);
+            flex-wrap: wrap;
+            gap: 0.8rem;
+            position: relative;
+        }
+        nav {
+            display: flex;
+            gap: 2.5rem;
+            align-items: center;
+        }
+        nav a {
+            font-family: 'Inter', sans-serif;
+            font-weight: 400;
+            font-size: 0.8rem;
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+            color: rgba(245, 240, 235, 0.5);
+            text-decoration: none;
+            transition: color 0.4s, border-color 0.4s;
+            border-bottom: 1px solid transparent;
+            padding-bottom: 4px;
+            text-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+            position: relative;
+        }
+        nav a::after {
+            content: '';
+            position: absolute;
+            bottom: -1px;
+            left: 0;
+            width: 0;
+            height: 1px;
+            background: var(--gold);
+            transition: width 0.4s ease;
+        }
+        nav a:hover::after,
+        nav a.active::after {
+            width: 100%;
+        }
+        nav a:hover,
+        nav a.active {
+            color: var(--gold-light);
+        }
+        .hamburger {
+            display: none;
+            flex-direction: column;
+            gap: 5px;
+            cursor: pointer;
+            z-index: 1001;
+            background: transparent;
+            border: none;
+            padding: 4px;
+            width: 32px;
+        }
+        .hamburger span {
+            display: block;
+            height: 1.5px;
+            background: rgba(245, 240, 235, 0.5);
+            border-radius: 2px;
+            transition: all 0.4s ease;
+            width: 100%;
+        }
+        .hamburger.active span:nth-child(1) {
+            transform: rotate(45deg) translate(5px, 5px);
+            background: var(--gold-light);
+        }
+        .hamburger.active span:nth-child(2) {
+            opacity: 0;
+        }
+        .hamburger.active span:nth-child(3) {
+            transform: rotate(-45deg) translate(4px, -4px);
+            background: var(--gold-light);
+        }
+        .mobile-menu {
+            display: none;
+            position: fixed;
+            top: 0;
+            right: -100%;
+            width: 300px;
+            height: 100vh;
+            background: rgba(12, 11, 10, 0.95);
+            backdrop-filter: blur(20px);
+            z-index: 1000;
+            flex-direction: column;
+            padding: 6rem 2rem 2rem;
+            gap: 1.5rem;
+            transition: right 0.5s var(--transition-smooth);
+            border-left: 1px solid rgba(184, 164, 140, 0.08);
+        }
+        .mobile-menu.active {
+            right: 0;
+        }
+        .mobile-menu a {
+            font-family: 'Inter', sans-serif;
+            font-weight: 400;
+            font-size: 0.85rem;
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+            color: rgba(245, 240, 235, 0.5);
+            text-decoration: none;
+            transition: color 0.3s;
+            padding: 0.4rem 0;
+            border-bottom: 1px solid rgba(184, 164, 140, 0.04);
+        }
+        .mobile-menu a:hover,
+        .mobile-menu a.active {
+            color: var(--gold-light);
+        }
+        .mobile-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 999;
+            transition: opacity 0.4s ease;
+        }
+        .mobile-overlay.active {
+            display: block;
+        }
+
+        /* ─── Hero ─── */
+        .hero {
+            width: 100%;
+            margin: 2rem 0 3.5rem;
+            position: relative;
+            overflow: hidden;
+            border-radius: 4px;
+            box-shadow: 0 8px 50px rgba(0, 0, 0, 0.5);
+            transform: perspective(1000px) rotateX(0deg);
+            transition: transform 0.6s ease;
+        }
+        .hero:hover {
+            transform: perspective(1000px) rotateX(0.5deg);
+        }
+        .hero-image {
+            width: 100%;
+            height: auto;
+            display: block;
+            aspect-ratio: 16 / 9;
+            object-fit: cover;
+            filter: grayscale(0.15) contrast(1.05) brightness(0.92);
+            transition: filter 0.8s ease, transform 0.8s ease;
+            will-change: transform;
+        }
+        .hero:hover .hero-image {
+            filter: grayscale(0.05) contrast(1.08) brightness(1);
+            transform: scale(1.01);
+        }
+        .hero-overlay {
+            position: absolute;
+            bottom: 3rem;
+            left: 3rem;
+            background: rgba(12, 11, 10, 0.5);
+            backdrop-filter: blur(8px);
+            padding: 0.8rem 2.4rem;
+            border-left: 4px solid var(--gold);
+            border-radius: 0 4px 4px 0;
+            animation: heroFadeIn 1.2s ease 0.3s both;
+        }
+        @keyframes heroFadeIn {
+            from {
+                opacity: 0;
+                transform: translateX(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+        .hero-overlay h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: 2.2rem;
+            font-weight: 400;
+            letter-spacing: 0.06em;
+            color: #fcfaf7;
+            margin: 0;
+            line-height: 1.2;
+            text-shadow: 0 4px 16px rgba(0, 0, 0, 0.5);
+        }
+        .hero-overlay span {
+            font-family: 'Inter', sans-serif;
+            font-weight: 300;
+            font-size: 0.85rem;
+            letter-spacing: 0.2em;
+            color: var(--gold-light);
+        }
+        .hero-badge {
+            position: absolute;
+            top: 1.5rem;
+            right: 1.5rem;
+            background: rgba(12, 11, 10, 0.4);
+            backdrop-filter: blur(8px);
+            padding: 0.3rem 1.2rem;
+            border-radius: 30px;
+            font-size: 0.6rem;
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+            color: rgba(245, 240, 235, 0.4);
+            border: 1px solid rgba(184, 164, 140, 0.08);
+        }
+
+        /* ─── Gallery Tools ─── */
+        .gallery-tools {
+            display: flex;
+            gap: 0.8rem;
+            flex-wrap: wrap;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+        .gallery-tools button {
+            font-family: 'Inter', sans-serif;
+            font-weight: 400;
+            font-size: 0.6rem;
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+            background: transparent;
+            border: 1px solid rgba(184, 164, 140, 0.08);
+            color: rgba(245, 240, 235, 0.3);
+            padding: 0.3rem 1.2rem;
+            border-radius: 30px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(2px);
+        }
+        .gallery-tools button:hover {
+            border-color: var(--gold-dark);
+            color: var(--gold-light);
+            background: rgba(184, 164, 140, 0.04);
+        }
+        .gallery-tools button i {
+            margin-right: 0.4rem;
+        }
+        .gallery-tools button.active-toggle {
+            border-color: var(--gold);
+            color: var(--gold-light);
+            background: rgba(184, 164, 140, 0.08);
+        }
+        .gallery-tools .stats {
+            font-family: 'Inter', sans-serif;
+            font-weight: 300;
+            font-size: 0.6rem;
+            letter-spacing: 0.1em;
+            color: rgba(245, 240, 235, 0.2);
+            margin-left: auto;
+        }
+        .gallery-tools .stats span {
+            color: var(--gold-dark);
+            transition: color 0.4s;
+        }
+        .gallery-tools .stats span.pulse {
+            color: var(--gold-light);
+            animation: statPulse 0.6s ease;
+        }
+        @keyframes statPulse {
+            0%,
+            100% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.3);
+                color: var(--gold);
+            }
+        }
+
+        .search-wrapper {
+            position: relative;
+            display: inline-flex;
+            align-items: center;
+            margin-right: 0.6rem;
+        }
+        .search-input {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(184, 164, 140, 0.08);
+            color: #f5f0eb;
+            padding: 0.35rem 2.2rem 0.35rem 1rem;
+            font-family: 'Inter', sans-serif;
+            font-size: 0.65rem;
+            letter-spacing: 0.06em;
+            border-radius: 30px;
+            outline: none;
+            width: 160px;
+            transition: all 0.4s ease;
+            backdrop-filter: blur(2px);
+        }
+        .search-input::placeholder {
+            color: rgba(245, 240, 235, 0.15);
+        }
+        .search-input:focus {
+            border-color: var(--gold);
+            width: 200px;
+            background: rgba(184, 164, 140, 0.03);
+        }
+        .search-icon {
+            position: absolute;
+            right: 10px;
+            color: rgba(245, 240, 235, 0.2);
+            font-size: 0.7rem;
+            pointer-events: none;
+            transition: color 0.3s;
+        }
+        .search-input:focus~.search-icon {
+            color: var(--gold-dark);
+        }
+        .search-clear {
+            position: absolute;
+            right: 28px;
+            color: rgba(245, 240, 235, 0.2);
+            font-size: 0.6rem;
+            cursor: pointer;
+            opacity: 0;
+            transition: opacity 0.3s;
+            pointer-events: none;
+            background: none;
+            border: none;
+        }
+        .search-clear.visible {
+            opacity: 1;
+            pointer-events: auto;
+        }
+        .search-clear:hover {
+            color: var(--gold-light);
+        }
+
+        /* ─── Filter Bar ─── */
+        .filter-bar {
+            display: flex;
+            gap: 0.8rem;
+            flex-wrap: wrap;
+            margin-bottom: 2.5rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 1px solid rgba(184, 164, 140, 0.06);
+            align-items: center;
+        }
+        .filter-btn {
+            font-family: 'Inter', sans-serif;
+            font-weight: 400;
+            font-size: 0.65rem;
+            letter-spacing: 0.18em;
+            text-transform: uppercase;
+            background: transparent;
+            border: 1px solid rgba(184, 164, 140, 0.1);
+            color: rgba(245, 240, 235, 0.4);
+            padding: 0.3rem 1.4rem;
+            border-radius: 30px;
+            cursor: pointer;
+            transition: all 0.4s ease;
+            backdrop-filter: blur(2px);
+        }
+        .filter-btn:hover {
+            border-color: var(--gold);
+            color: var(--gold-light);
+            background: rgba(184, 164, 140, 0.06);
+        }
+        .filter-btn.active {
+            border-color: var(--gold);
+            color: #f5f0eb;
+            background: rgba(184, 164, 140, 0.12);
+            box-shadow: 0 0 30px rgba(184, 164, 140, 0.03);
+        }
+
+        /* ─── Gallery Grid ─── */
+        .gallery-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 2rem 1.8rem;
+            margin: 2.5rem 0 4rem;
+            transition: all 0.5s var(--transition-smooth);
+        }
+        .gallery-grid.list-view {
+            grid-template-columns: 1fr;
+            gap: 1rem;
+        }
+        .gallery-item {
+            break-inside: avoid;
+            cursor: pointer;
+            transition: transform 0.5s var(--transition-smooth), box-shadow 0.5s ease, opacity 0.4s ease;
+            background: rgba(20, 18, 16, 0.4);
+            backdrop-filter: blur(4px);
+            border-radius: 4px;
+            border: 1px solid rgba(184, 164, 140, 0.05);
+            overflow: hidden;
+            opacity: 0;
+            animation: fadeUp 0.9s ease forwards;
+            transform-style: preserve-3d;
+            perspective: 800px;
+            position: relative;
+        }
+        .gallery-item.hidden-by-search {
+            display: none;
+        }
+        .gallery-grid.list-view .gallery-item {
+            display: flex;
+            flex-direction: row;
+            align-items: stretch;
+            min-height: 140px;
+            max-height: 180px;
+        }
+        .gallery-grid.list-view .gallery-item .img-wrapper {
+            aspect-ratio: auto;
+            width: 200px;
+            min-width: 140px;
+            flex-shrink: 0;
+        }
+        .gallery-grid.list-view .gallery-item .caption {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            border-top: none;
+            border-left: 1px solid rgba(184, 164, 140, 0.06);
+            padding: 1rem 1.5rem;
+        }
+        .gallery-item:nth-child(1) {
+            animation-delay: 0.05s;
+        }
+        .gallery-item:nth-child(2) {
+            animation-delay: 0.10s;
+        }
+        .gallery-item:nth-child(3) {
+            animation-delay: 0.15s;
+        }
+        .gallery-item:nth-child(4) {
+            animation-delay: 0.20s;
+        }
+        .gallery-item:nth-child(5) {
+            animation-delay: 0.25s;
+        }
+        .gallery-item:nth-child(6) {
+            animation-delay: 0.30s;
+        }
+        .gallery-item:nth-child(7) {
+            animation-delay: 0.35s;
+        }
+        .gallery-item:nth-child(8) {
+            animation-delay: 0.40s;
+        }
+        @keyframes fadeUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px) scale(0.97);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+        .gallery-item:hover {
+            transform: translateY(-10px) scale(1.01);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.6);
+            border-color: rgba(184, 164, 140, 0.15);
+        }
+        .gallery-grid.list-view .gallery-item:hover {
+            transform: translateY(-3px) scale(1.005);
+        }
+        .gallery-item .img-wrapper {
+            position: relative;
+            overflow: hidden;
+            aspect-ratio: 1 / 1.15;
+        }
+        .gallery-item .img-wrapper img {
+            width: 100%;
+            height: 100%;
+            display: block;
+            object-fit: cover;
+            transition: transform 0.8s var(--transition-smooth), filter 0.6s ease;
+            background: #2a2520;
+        }
+        .gallery-item:hover .img-wrapper img {
+            transform: scale(1.05);
+            filter: brightness(1.05);
+        }
+        .gallery-item .img-wrapper .hover-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(12, 11, 10, 0.2);
+            opacity: 0;
+            transition: opacity 0.5s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            backdrop-filter: blur(2px);
+        }
+        .gallery-item:hover .img-wrapper .hover-overlay {
+            opacity: 1;
+        }
+        .gallery-item .img-wrapper .hover-overlay span {
+            font-family: 'Inter', sans-serif;
+            font-size: 0.65rem;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            color: var(--gold-light);
+            border: 1px solid rgba(184, 164, 140, 0.2);
+            padding: 0.3rem 1.2rem;
+            border-radius: 30px;
+            background: rgba(12, 11, 10, 0.3);
+            backdrop-filter: blur(4px);
+        }
+
+        /* ─── Status Badge — Theme-aligned ─── */
+        .status-badge {
+            position: absolute;
+            top: 0.7rem;
+            right: 0.7rem;
+            z-index: 10;
+            font-family: 'Inter', sans-serif;
+            font-weight: 600;
+            font-size: 0.65rem;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            padding: 0.2rem 0.9rem;
+            border-radius: 30px;
+            border: 1px solid rgba(184, 164, 140, 0.15);
+            pointer-events: none;
+            color: #f5f0eb;
+            backdrop-filter: blur(6px);
+            background: rgba(12, 11, 10, 0.55);
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.3);
+            transition: all 0.3s ease;
+        }
+        .gallery-item:hover .status-badge {
+            transform: scale(1.04);
+            border-color: rgba(184, 164, 140, 0.3);
+        }
+        .status-badge.sold {
+            color: var(--gold-light);
+            border-color: var(--gold);
+            background: rgba(184, 164, 140, 0.12);
+            box-shadow: 0 0 20px rgba(184, 164, 140, 0.04);
+        }
+        .status-badge.available {
+            color: #9ab87a;
+            border-color: #9ab87a;
+            background: rgba(154, 184, 122, 0.08);
+            box-shadow: 0 0 20px rgba(154, 184, 122, 0.03);
+        }
+        .status-badge.not-for-sale {
+            color: rgba(245, 240, 235, 0.3);
+            border-color: rgba(184, 164, 140, 0.08);
+            background: rgba(12, 11, 10, 0.3);
+        }
+
+        .caption {
+            padding: 0.7rem 0.7rem 0.9rem;
+            font-size: 0.75rem;
+            letter-spacing: 0.04em;
+            color: rgba(245, 240, 235, 0.7);
+            border-top: 1px solid rgba(184, 164, 140, 0.06);
+            background: rgba(12, 11, 10, 0.4);
+            backdrop-filter: blur(2px);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 0.3rem;
+        }
+        .caption .title {
+            font-family: 'Playfair Display', serif;
+            font-weight: 400;
+            font-size: 1rem;
+            color: #f5f0eb;
+        }
+        .caption .meta {
+            font-family: 'Inter', sans-serif;
+            font-weight: 300;
+            font-size: 0.6rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: rgba(184, 164, 140, 0.5);
+        }
+        .caption .meta .sep {
+            margin: 0 0.3rem;
+            color: rgba(184, 164, 140, 0.15);
+        }
+        .caption .inquiry-badge {
+            font-size: 0.5rem;
+            background: var(--gold);
+            color: #1a1816;
+            padding: 0.15rem 0.8rem;
+            border-radius: 30px;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            white-space: nowrap;
+        }
+        .caption .inquiry-badge:hover {
+            background: var(--gold-light);
+            transform: scale(1.06);
+            box-shadow: 0 0 30px rgba(184, 164, 140, 0.15);
+        }
+
+        .no-results {
+            display: none;
+            text-align: center;
+            padding: 3rem;
+            color: rgba(245, 240, 235, 0.2);
+            font-family: 'Playfair Display', serif;
+            font-size: 1.2rem;
+            letter-spacing: 0.08em;
+        }
+        .no-results.visible {
+            display: block;
+        }
+        .no-results i {
+            display: block;
+            font-size: 2rem;
+            margin-bottom: 1rem;
+            color: rgba(184, 164, 140, 0.3);
+        }
+
+        /* ─── Sketchbook ─── */
+        .sketchbook-section {
+            margin: 3rem 0 4rem;
+            border-top: 1px solid rgba(184, 164, 140, 0.06);
+            padding-top: 3rem;
+        }
+        .sketchbook-intro {
+            font-size: 1rem;
+            color: rgba(245, 240, 235, 0.4);
+            max-width: 70%;
+            margin-bottom: 2.5rem;
+            font-weight: 300;
+            letter-spacing: 0.02em;
+        }
+        .sketchbook-intro strong {
+            color: var(--gold-light);
+            font-weight: 400;
+        }
+        .sketchbook-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 1.5rem;
+        }
+        .sketchbook-item {
+            background: rgba(20, 18, 16, 0.3);
+            backdrop-filter: blur(4px);
+            border-radius: 4px;
+            border: 1px solid rgba(184, 164, 140, 0.05);
+            overflow: hidden;
+            transition: transform 0.4s ease, box-shadow 0.4s ease, border-color 0.4s;
+            aspect-ratio: 1 / 1.2;
+            position: relative;
+            cursor: pointer;
+        }
+        .sketchbook-item:hover {
+            transform: translateY(-6px) scale(1.01);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.5);
+            border-color: rgba(184, 164, 140, 0.12);
+        }
+        .sketchbook-item img {
+            width: 100%;
+            height: 100%;
+            display: block;
+            object-fit: cover;
+            transition: transform 0.6s ease, filter 0.6s ease;
+            background: #2a2520;
+        }
+        .sketchbook-item:hover img {
+            transform: scale(1.04);
+            filter: brightness(1.05);
+        }
+
+        /* Always visible overlay & inquire button */
+        .sketchbook-item .sketch-overlay {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            padding: 0.6rem 0.8rem;
+            background: linear-gradient(to top, rgba(12, 11, 10, 0.85), transparent);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: rgba(245, 240, 235, 0.9);
+            font-size: 0.6rem;
+            letter-spacing: 0.05em;
+            transition: opacity 0.4s ease;
+            pointer-events: auto;
+            opacity: 1;
+            gap: 0.5rem;
+        }
+        .sketchbook-item .sketch-overlay .sketch-title {
+            font-family: 'Inter', sans-serif;
+            font-weight: 400;
+            text-transform: uppercase;
+            opacity: 0.85;
+            font-size: 0.55rem;
+            letter-spacing: 0.08em;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .sketchbook-item .sketch-inquire {
+            background: var(--gold);
+            color: #1a1816;
+            border: none;
+            border-radius: 30px;
+            padding: 0.15rem 0.8rem;
+            font-family: 'Inter', sans-serif;
+            font-weight: 600;
+            font-size: 0.5rem;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            opacity: 1;
+            transform: translateY(0);
+            pointer-events: auto;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+            flex-shrink: 0;
+        }
+        .sketchbook-item .sketch-inquire:hover {
+            background: var(--gold-light);
+            transform: scale(1.05);
+        }
+
+        /* ─── About ─── */
+        .about-section {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 4.5rem;
+            margin: 4rem 0 5rem;
+            align-items: center;
+            border-top: 1px solid rgba(184, 164, 140, 0.06);
+            padding-top: 4rem;
+        }
+        .portrait-placeholder {
+            background: rgba(40, 35, 30, 0.3);
+            backdrop-filter: blur(4px);
+            aspect-ratio: 4 / 5;
+            width: 100%;
+            max-width: 440px;
+            justify-self: center;
+            border-radius: 4px;
+            overflow: hidden;
+            border: 1px solid rgba(184, 164, 140, 0.06);
+            transition: border-color 0.4s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .portrait-placeholder:hover {
+            border-color: rgba(184, 164, 140, 0.15);
+        }
+        .portrait-placeholder img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+        .about-text h2 {
+            font-family: 'Playfair Display', serif;
+            font-size: 2.4rem;
+            font-weight: 400;
+            margin-bottom: 1.5rem;
+            letter-spacing: 0.04em;
+            color: #f5f0eb;
+        }
+        .about-text h2 .gold {
+            color: var(--gold-light);
+        }
+        .about-text p {
+            font-size: 1.05rem;
+            line-height: 2;
+            color: rgba(245, 240, 235, 0.7);
+            font-weight: 300;
+            max-width: 90%;
+        }
+        .about-text p+p {
+            margin-top: 1.2rem;
+        }
+        .commission-cta {
+            margin-top: 2.2rem;
+            display: flex;
+            gap: 1.2rem;
+            flex-wrap: wrap;
+        }
+        .commission-cta a {
+            font-family: 'Inter', sans-serif;
+            font-weight: 400;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            font-size: 0.65rem;
+            padding: 0.5rem 1.8rem;
+            border: 1px solid var(--gold);
+            color: var(--gold-light);
+            text-decoration: none;
+            transition: all 0.4s ease;
+            border-radius: 2px;
+            background: rgba(184, 164, 140, 0.03);
+            backdrop-filter: blur(2px);
+            position: relative;
+            overflow: hidden;
+        }
+        .commission-cta a::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: var(--gold);
+            transition: left 0.5s ease;
+            z-index: -1;
+        }
+        .commission-cta a:hover::before {
+            left: 0;
+        }
+        .commission-cta a:hover {
+            color: #1a1816;
+            border-color: var(--gold);
+        }
+        .commission-cta a i {
+            margin-right: 0.5rem;
+        }
+
+        /* ─── Testimonials ─── */
+        .testimonials {
+            margin: 3rem 0 4rem;
+            padding: 3rem 0;
+            border-top: 1px solid rgba(184, 164, 140, 0.05);
+            border-bottom: 1px solid rgba(184, 164, 140, 0.05);
+        }
+        .testimonials .testimonial-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2.5rem;
+            margin-top: 1.5rem;
+        }
+        .testimonial-card {
+            background: rgba(20, 18, 16, 0.2);
+            backdrop-filter: blur(4px);
+            padding: 2rem 2rem 1.5rem;
+            border-radius: 4px;
+            border: 1px solid rgba(184, 164, 140, 0.04);
+            transition: border-color 0.4s, transform 0.4s ease;
+        }
+        .testimonial-card:hover {
+            border-color: rgba(184, 164, 140, 0.1);
+            transform: translateY(-4px);
+        }
+        .testimonial-card .quote {
+            font-family: 'Playfair Display', serif;
+            font-style: italic;
+            font-size: 1rem;
+            color: rgba(245, 240, 235, 0.75);
+            line-height: 1.8;
+        }
+        .testimonial-card .quote::before {
+            content: '"';
+            color: var(--gold-dark);
+            font-size: 1.6rem;
+            margin-right: 0.2rem;
+        }
+        .testimonial-card .attribution {
+            margin-top: 1rem;
+            font-size: 0.65rem;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            color: rgba(184, 164, 140, 0.4);
+            font-weight: 400;
+        }
+        .testimonial-card .attribution .gold {
+            color: var(--gold);
+        }
+
+        /* ─── Footer ─── */
+        footer {
+            margin-top: 4rem;
+            padding: 3rem 0 2.5rem;
+            border-top: 1px solid rgba(184, 164, 140, 0.06);
+            display: grid;
+            grid-template-columns: 1.8fr 1.2fr 0.8fr;
+            gap: 3rem;
+            align-items: start;
+        }
+        .footer-inquiry h4 {
+            font-family: 'Playfair Display', serif;
+            font-weight: 400;
+            font-size: 1.3rem;
+            letter-spacing: 0.04em;
+            margin-bottom: 0.5rem;
+            color: #f5f0eb;
+        }
+        .footer-inquiry h4 .gold {
+            color: var(--gold-light);
+        }
+        .footer-inquiry p {
+            font-size: 0.85rem;
+            color: rgba(245, 240, 235, 0.35);
+            margin-bottom: 1.2rem;
+            max-width: 80%;
+        }
+        .footer-inquiry .contact-links {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            margin: 0.8rem 0 1.5rem;
+        }
+        .footer-inquiry .contact-links a {
+            color: rgba(245, 240, 235, 0.4);
+            text-decoration: none;
+            font-size: 0.85rem;
+            transition: color 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.6rem;
+        }
+        .footer-inquiry .contact-links a:hover {
+            color: var(--gold-light);
+        }
+        .footer-inquiry .contact-links a i {
+            color: var(--gold-dark);
+            width: 1.2rem;
+        }
+        .footer-form {
+            display: flex;
+            flex-direction: column;
+            gap: 0.8rem;
+        }
+        .footer-form input,
+        .footer-form textarea {
+            background: rgba(255, 255, 255, 0.02);
+            border: none;
+            border-bottom: 1px solid rgba(184, 164, 140, 0.08);
+            padding: 0.6rem 0.2rem;
+            font-family: 'Inter', sans-serif;
+            font-weight: 300;
+            font-size: 0.85rem;
+            color: #f5f0eb;
+            transition: border-color 0.4s;
+            outline: none;
+            width: 100%;
+        }
+        .footer-form input::placeholder,
+        .footer-form textarea::placeholder {
+            color: rgba(245, 240, 235, 0.15);
+        }
+        .footer-form input:focus,
+        .footer-form textarea:focus {
+            border-bottom-color: var(--gold);
+        }
+        .footer-form textarea {
+            min-height: 60px;
+            resize: vertical;
+        }
+        .footer-form button {
+            background: var(--gold);
+            border: none;
+            color: #1a1816;
+            padding: 0.6rem 2.2rem;
+            font-family: 'Inter', sans-serif;
+            font-weight: 500;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            font-size: 0.6rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border-radius: 2px;
+            width: fit-content;
+            margin-top: 0.2rem;
+        }
+        .footer-form button:hover {
+            background: var(--gold-light);
+            transform: scale(1.02);
+            box-shadow: 0 0 40px rgba(184, 164, 140, 0.1);
+        }
+        .newsletter {
+            margin-top: 1.5rem;
+        }
+        .newsletter p {
+            font-size: 0.7rem;
+            color: rgba(245, 240, 235, 0.25);
+            margin-bottom: 0.6rem;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+        }
+        .newsletter-input {
+            display: flex;
+            gap: 0.5rem;
+            align-items: center;
+        }
+        .newsletter-input input {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(184, 164, 140, 0.06);
+            padding: 0.4rem 0.8rem;
+            font-family: 'Inter', sans-serif;
+            font-weight: 300;
+            font-size: 0.75rem;
+            color: #f5f0eb;
+            border-radius: 2px;
+            outline: none;
+            width: 180px;
+            transition: border-color 0.3s;
+        }
+        .newsletter-input input:focus {
+            border-color: var(--gold);
+        }
+        .newsletter-input button {
+            background: var(--gold);
+            border: none;
+            color: #1a1816;
+            padding: 0.4rem 1.2rem;
+            font-family: 'Inter', sans-serif;
+            font-weight: 500;
+            font-size: 0.55rem;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            cursor: pointer;
+            border-radius: 2px;
+            transition: background 0.3s;
+        }
+        .newsletter-input button:hover {
+            background: var(--gold-light);
+        }
+        .social-icons {
+            display: flex;
+            gap: 1.6rem;
+            justify-content: flex-end;
+            align-items: center;
+            padding-top: 0.2rem;
+            flex-wrap: wrap;
+        }
+        .social-icons a {
+            color: rgba(245, 240, 235, 0.2);
+            font-size: 1.3rem;
+            transition: all 0.4s ease;
+            text-decoration: none;
+        }
+        .social-icons a:hover {
+            color: var(--gold-light);
+            transform: translateY(-3px) scale(1.1);
+        }
+
+        /* ─── Lightbox ─── */
+        .lightbox {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(8, 7, 6, 0.95);
+            backdrop-filter: blur(16px);
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            flex-direction: column;
+            padding: 2rem;
+            opacity: 0;
+            transition: opacity 0.5s ease;
+        }
+        .lightbox.active {
+            display: flex;
+            opacity: 1;
+            animation: lbFade 0.5s ease;
+        }
+        @keyframes lbFade {
+            from {
+                opacity: 0;
+                transform: scale(0.97);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+        .lightbox-content {
+            max-width: 78vw;
+            max-height: 58vh;
+            object-fit: contain;
+            border-radius: 4px;
+            box-shadow: var(--shadow-heavy);
+            transition: transform 0.3s ease;
+        }
+        .lightbox-caption {
+            margin-top: 1.5rem;
+            color: rgba(245, 240, 235, 0.85);
+            text-align: center;
+            max-width: 70%;
+        }
+        .lightbox-caption .lb-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.6rem;
+            font-weight: 400;
+            letter-spacing: 0.04em;
+        }
+        .lightbox-caption .lb-details {
+            font-family: 'Inter', sans-serif;
+            font-weight: 300;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.12em;
+            color: var(--gold-dark);
+            display: block;
+            margin-top: 0.2rem;
+        }
+        .lightbox-caption .lb-date {
+            font-family: 'Inter', sans-serif;
+            font-weight: 300;
+            font-size: 0.65rem;
+            color: rgba(184, 164, 140, 0.3);
+            display: inline-block;
+            margin-left: 0.6rem;
+        }
+        .lightbox-caption .lb-series {
+            font-family: 'Inter', sans-serif;
+            font-weight: 300;
+            font-size: 0.65rem;
+            color: var(--gold-dark);
+            display: inline-block;
+            margin-left: 0.6rem;
+            letter-spacing: 0.1em;
+        }
+        .lightbox-story {
+            max-width: 560px;
+            margin: 0.6rem auto 0;
+            color: rgba(245, 240, 235, 0.35);
+            font-size: 0.9rem;
+            font-weight: 300;
+            line-height: 1.9;
+            text-align: center;
+            padding: 0 1rem;
+            font-style: italic;
+            border-top: 1px solid rgba(184, 164, 140, 0.05);
+            padding-top: 1rem;
+        }
+        .color-palette {
+            display: flex;
+            gap: 0.5rem;
+            justify-content: center;
+            margin-top: 0.7rem;
+            flex-wrap: wrap;
+        }
+        .color-swatch {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            cursor: pointer;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            position: relative;
+        }
+        .color-swatch:hover {
+            transform: scale(1.4);
+            box-shadow: 0 0 16px currentColor;
+            z-index: 2;
+        }
+        .color-swatch .tooltip {
+            position: absolute;
+            bottom: 130%;
+            left: 50%;
+            transform: translateX(-50%) scale(0.8);
+            background: #1a1816;
+            color: #f5f0eb;
+            font-size: 0.5rem;
+            letter-spacing: 0.06em;
+            padding: 0.2rem 0.6rem;
+            border-radius: 3px;
+            white-space: nowrap;
+            opacity: 0;
+            pointer-events: none;
+            transition: all 0.3s ease;
+            border: 1px solid rgba(184, 164, 140, 0.15);
+        }
+        .color-swatch:hover .tooltip {
+            opacity: 1;
+            transform: translateX(-50%) scale(1);
+        }
+        .lightbox-actions {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1.2rem;
+            flex-wrap: wrap;
+            justify-content: center;
+            align-items: center;
+        }
+        .lightbox-actions a {
+            font-family: 'Inter', sans-serif;
+            font-weight: 400;
+            letter-spacing: 0.06em;
+            font-size: 0.65rem;
+            text-transform: uppercase;
+            padding: 0.5rem 1.8rem;
+            border-radius: 2px;
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(184, 164, 140, 0.08);
+            color: rgba(245, 240, 235, 0.5);
+            text-decoration: none;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .lightbox-actions a:hover {
+            background: var(--gold);
+            border-color: var(--gold);
+            color: #1a1816;
+        }
+        .lightbox-actions a.hidden-action {
+            display: none;
+        }
+        .lightbox-nav {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(184, 164, 140, 0.05);
+            color: rgba(245, 240, 235, 0.15);
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 1.2rem;
+            transition: all 0.4s ease;
+            backdrop-filter: blur(4px);
+        }
+        .lightbox-nav:hover {
+            background: rgba(184, 164, 140, 0.06);
+            border-color: var(--gold);
+            color: var(--gold-light);
+        }
+        .lightbox-nav.prev {
+            left: 1.5rem;
+        }
+        .lightbox-nav.next {
+            right: 1.5rem;
+        }
+        .lightbox-close {
+            position: absolute;
+            top: 2rem;
+            right: 2.5rem;
+            font-size: 2.2rem;
+            color: rgba(245, 240, 235, 0.15);
+            cursor: pointer;
+            font-weight: 300;
+            transition: all 0.4s ease;
+            z-index: 1000;
+            line-height: 1;
+        }
+        .lightbox-close:hover {
+            color: var(--gold-light);
+            transform: rotate(90deg) scale(1.1);
+        }
+        .lightbox-counter {
+            position: absolute;
+            bottom: 2rem;
+            left: 50%;
+            transform: translateX(-50%);
+            font-family: 'Inter', sans-serif;
+            font-weight: 300;
+            font-size: 0.6rem;
+            letter-spacing: 0.3em;
+            color: rgba(245, 240, 235, 0.06);
+        }
+        .lightbox-shortcut-hint {
+            position: absolute;
+            bottom: 2.5rem;
+            right: 2.5rem;
+            font-size: 0.5rem;
+            letter-spacing: 0.12em;
+            color: rgba(245, 240, 235, 0.06);
+            text-transform: uppercase;
+        }
+
+        /* ─── Responsive ─── */
+        @media (max-width: 1024px) {
+            .container {
+                padding: 0 2rem;
+            }
+            .about-section {
+                gap: 3rem;
+            }
+            footer {
+                grid-template-columns: 1fr 1fr;
+                gap: 2rem;
+            }
+            .search-input {
+                width: 120px;
+            }
+            .search-input:focus {
+                width: 160px;
+            }
+            .sketchbook-intro {
+                max-width: 85%;
+            }
+        }
+        @media (max-width: 820px) {
+            .container {
+                padding: 0 1.5rem;
+                background: rgba(12, 11, 10, 0.5);
+            }
+            .hamburger {
+                display: flex;
+            }
+            .mobile-menu {
+                display: flex;
+            }
+            nav {
+                display: none;
+            }
+            .about-section {
+                grid-template-columns: 1fr;
+                gap: 2.5rem;
+            }
+            .about-text p {
+                max-width: 100%;
+            }
+            footer {
+                grid-template-columns: 1fr;
+                gap: 2rem;
+            }
+            .social-icons {
+                justify-content: flex-start;
+            }
+            .hero-overlay {
+                bottom: 1.5rem;
+                left: 1.5rem;
+                padding: 0.4rem 1.5rem;
+            }
+            .hero-overlay h1 {
+                font-size: 1.4rem;
+            }
+            .lightbox-nav {
+                width: 38px;
+                height: 38px;
+                font-size: 0.9rem;
+            }
+            .lightbox-nav.prev {
+                left: 0.8rem;
+            }
+            .lightbox-nav.next {
+                right: 0.8rem;
+            }
+            .lightbox-content {
+                max-width: 95vw;
+                max-height: 50vh;
+            }
+            .lightbox-caption {
+                max-width: 90%;
+            }
+            .gallery-grid {
+                grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+                gap: 1.2rem;
+            }
+            .gallery-grid.list-view .gallery-item {
+                flex-direction: column;
+                max-height: none;
+                min-height: auto;
+            }
+            .gallery-grid.list-view .gallery-item .img-wrapper {
+                width: 100%;
+                min-width: auto;
+                aspect-ratio: 16/10;
+            }
+            .gallery-grid.list-view .gallery-item .caption {
+                border-left: none;
+                border-top: 1px solid rgba(184, 164, 140, 0.06);
+            }
+            .testimonials .testimonial-grid {
+                grid-template-columns: 1fr;
+            }
+            .scroll-top-btn {
+                bottom: 5rem;
+                left: 1rem;
+                width: 36px;
+                height: 36px;
+            }
+            .search-wrapper {
+                width: 100%;
+                margin-right: 0;
+            }
+            .search-input {
+                width: 100%;
+            }
+            .search-input:focus {
+                width: 100%;
+            }
+            .gallery-tools {
+                gap: 0.5rem;
+            }
+            .gallery-tools .stats {
+                margin-left: 0;
+                width: 100%;
+                text-align: right;
+            }
+            .sketchbook-intro {
+                max-width: 100%;
+            }
+            .sketchbook-grid {
+                grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+                gap: 1rem;
+            }
+        }
+
+        @media (max-width: 640px) {
+            /* ─── Mobile: gallery 3 columns like sketchbook ─── */
+            .gallery-grid {
+                grid-template-columns: repeat(3, 1fr);
+                gap: 0.6rem;
+            }
+            .gallery-grid.list-view {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+            }
+            .gallery-item .img-wrapper {
+                aspect-ratio: 1 / 1.15;
+            }
+            .caption .title {
+                font-size: 0.75rem;
+            }
+            .caption .meta {
+                font-size: 0.5rem;
+            }
+            .caption .inquiry-badge {
+                font-size: 0.45rem;
+                padding: 0.1rem 0.5rem;
+            }
+            .caption {
+                padding: 0.4rem 0.4rem 0.5rem;
+                gap: 0.15rem;
+            }
+            .status-badge {
+                font-size: 0.5rem;
+                padding: 0.1rem 0.5rem;
+                top: 0.3rem;
+                right: 0.3rem;
+            }
+            .gallery-tools button {
+                font-size: 0.5rem;
+                padding: 0.2rem 0.8rem;
+            }
+            .filter-btn {
+                font-size: 0.5rem;
+                padding: 0.2rem 0.8rem;
+            }
+            .section-title {
+                font-size: 1.4rem;
+            }
+            .hero-overlay h1 {
+                font-size: 1rem;
+            }
+            .hero-overlay span {
+                font-size: 0.6rem;
+            }
+            .hero-overlay {
+                bottom: 0.8rem;
+                left: 0.8rem;
+                padding: 0.3rem 1rem;
+            }
+            .hero-badge {
+                display: none;
+            }
+            .sketchbook-grid {
+                grid-template-columns: repeat(3, 1fr);
+                gap: 0.6rem;
+            }
+            .sketchbook-item {
+                aspect-ratio: 1 / 1.1;
+            }
+            .sketchbook-item .sketch-overlay .sketch-title {
+                font-size: 0.45rem;
+            }
+            .sketchbook-item .sketch-inquire {
+                font-size: 0.4rem;
+                padding: 0.1rem 0.5rem;
+            }
+            .sketchbook-item .sketch-overlay {
+                padding: 0.3rem 0.4rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .gallery-grid {
+                gap: 0.4rem;
+            }
+            .caption .title {
+                font-size: 0.65rem;
+            }
+            .caption .meta {
+                font-size: 0.45rem;
+            }
+            .caption .inquiry-badge {
+                font-size: 0.4rem;
+                padding: 0.05rem 0.4rem;
+            }
+            .caption {
+                padding: 0.3rem 0.3rem 0.4rem;
+            }
+            .status-badge {
+                font-size: 0.4rem;
+                padding: 0.05rem 0.4rem;
+                top: 0.2rem;
+                right: 0.2rem;
+            }
+            .sketchbook-grid {
+                gap: 0.4rem;
+            }
+            .sketchbook-item .sketch-overlay .sketch-title {
+                font-size: 0.4rem;
+            }
+            .sketchbook-item .sketch-inquire {
+                font-size: 0.35rem;
+                padding: 0.05rem 0.4rem;
+            }
+            .sketchbook-item .sketch-overlay {
+                padding: 0.2rem 0.3rem;
+            }
+            .container {
+                padding: 0 0.8rem;
+            }
+            .section-title {
+                font-size: 1.2rem;
+            }
+            .logo {
+                font-size: 1.2rem;
+            }
+            .gallery-tools {
+                gap: 0.3rem;
+            }
+            .gallery-tools button {
+                font-size: 0.45rem;
+                padding: 0.15rem 0.6rem;
+            }
+            .filter-btn {
+                font-size: 0.45rem;
+                padding: 0.15rem 0.6rem;
+            }
+            .filter-bar {
+                gap: 0.3rem;
+            }
+            .search-input {
+                font-size: 0.55rem;
+                padding: 0.25rem 1.8rem 0.25rem 0.8rem;
+            }
+            .hero-overlay h1 {
+                font-size: 0.85rem;
+            }
+            .hero-overlay span {
+                font-size: 0.5rem;
+            }
+            .hero-overlay {
+                bottom: 0.5rem;
+                left: 0.5rem;
+                padding: 0.2rem 0.8rem;
+            }
+            .lightbox-close {
+                top: 0.8rem;
+                right: 1rem;
+                font-size: 1.4rem;
+            }
+            .lightbox-nav {
+                width: 28px;
+                height: 28px;
+                font-size: 0.6rem;
+            }
+            .lightbox-nav.prev {
+                left: 0.2rem;
+            }
+            .lightbox-nav.next {
+                right: 0.2rem;
+            }
+            .lightbox-caption .lb-title {
+                font-size: 1rem;
+            }
+            .lightbox-caption .lb-details {
+                font-size: 0.6rem;
+            }
+            .lightbox-content {
+                max-width: 98vw;
+                max-height: 45vh;
+            }
+            .footer-inquiry p {
+                max-width: 100%;
+            }
+            .newsletter-input input {
+                width: 120px;
+            }
+            .toast-container {
+                top: 0.8rem;
+                right: 0.8rem;
+                left: 0.8rem;
+            }
+            .toast {
+                max-width: 100%;
+                font-size: 0.55rem;
+                padding: 0.4rem 0.8rem;
+            }
+            .scroll-top-btn {
+                bottom: 4rem;
+                left: 0.6rem;
+                width: 30px;
+                height: 30px;
+                font-size: 0.7rem;
+            }
+            .scroll-top-btn .progress-ring {
+                width: calc(100% + 6px);
+                height: calc(100% + 6px);
+                top: -3px;
+                left: -3px;
+            }
+        }
+
+        @media (max-width: 380px) {
+            .gallery-grid {
+                grid-template-columns: repeat(3, 1fr);
+                gap: 0.3rem;
+            }
+            .sketchbook-grid {
+                grid-template-columns: repeat(3, 1fr);
+                gap: 0.3rem;
+            }
+            .container {
+                padding: 0 0.5rem;
+            }
+            .caption .title {
+                font-size: 0.55rem;
+            }
+            .caption .meta {
+                font-size: 0.4rem;
+            }
+            .caption .inquiry-badge {
+                font-size: 0.35rem;
+                padding: 0.05rem 0.3rem;
+            }
+            .status-badge {
+                font-size: 0.35rem;
+                padding: 0.05rem 0.3rem;
+            }
+            .gallery-tools button {
+                font-size: 0.4rem;
+                padding: 0.1rem 0.5rem;
+            }
+            .filter-btn {
+                font-size: 0.4rem;
+                padding: 0.1rem 0.5rem;
+            }
+            .section-title {
+                font-size: 1rem;
+            }
+            .logo {
+                font-size: 1rem;
+            }
+            .hero-overlay h1 {
+                font-size: 0.7rem;
+            }
+            .hero-overlay span {
+                font-size: 0.4rem;
+            }
+            .hero-overlay {
+                bottom: 0.3rem;
+                left: 0.3rem;
+                padding: 0.15rem 0.6rem;
+            }
+            .hero-badge {
+                display: none;
+            }
+            .sketchbook-item .sketch-overlay .sketch-title {
+                font-size: 0.35rem;
+            }
+            .sketchbook-item .sketch-inquire {
+                font-size: 0.3rem;
+                padding: 0.05rem 0.3rem;
+            }
+            .sketchbook-item .sketch-overlay {
+                padding: 0.15rem 0.2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ═══ LOADING SCREEN ═══ -->
+    <div class="loader" id="loader">
+        <div class="loader-ring"></div>
+        <div class="loader-text">Nhlaka the artist</div>
+        <div class="loader-progress">
+            <div class="loader-progress-bar" id="progressBar"></div>
+        </div>
+    </div>
+
+    <!-- ═══ TOAST CONTAINER ═══ -->
+    <div class="toast-container" id="toastContainer"></div>
+
+    <!-- ═══ NATURE SLIDESHOW ═══ -->
+    <div class="bg-slideshow" id="bgSlideshow">
+        <div class="slide active" style="background-image: url('B/a.jpg');"></div>
+        <div class="slide" style="background-image: url('B/b.jpg');"></div>
+        <div class="slide" style="background-image: url('B/c.jpg');"></div>
+        <div class="slide" style="background-image: url('B/d.jpg');"></div>
+        <div class="slide" style="background-image: url('B/e.jpg');"></div>
+        <div class="slide" style="background-image: url('B/f.jpg');"></div>
+    </div>
+    <div class="bg-vignette"></div>
+
+    <!-- ═══ PARTICLE CANVAS ═══ -->
+    <canvas id="particles-canvas"></canvas>
+
+    <!-- ═══ MOBILE OVERLAY ═══ -->
+    <div class="mobile-overlay" id="mobileOverlay"></div>
+
+    <!-- ═══ MOBILE MENU ═══ -->
+    <div class="mobile-menu" id="mobileMenu">
+        <a href="#" class="active">Art</a>
+        <a href="#sketchbook">Sketchbook</a>
+        <a href="#about">Story</a>
+        <a href="#testimonials">Collectors</a>
+        <a href="#contact">Contact</a>
+    </div>
+
+    <!-- ═══ MAIN CONTENT ═══ -->
+    <div class="container">
+
+        <!-- HEADER -->
+        <header>
+            <a href="#" class="logo">Nhlaka the artist</a>
+            <nav>
+                <a href="#" class="active">Art</a>
+                <a href="#sketchbook">Sketchbook</a>
+                <a href="#about">Story</a>
+                <a href="#testimonials">Collectors</a>
+                <a href="#contact">Contact</a>
+            </nav>
+            <button class="hamburger" id="hamburgerBtn" aria-label="Menu">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+        </header>
+
+        <!-- HERO -->
+        <div class="hero" id="heroSection">
+            <img class="hero-image" id="heroImage" src="P/Oil/b.jpeg" alt="hero artwork by Nhlaka the artist" />
+            <div class="hero-overlay">
+                <h1>Nhlaka the artist <span>— Selected Works</span></h1>
+            </div>
+            <div class="hero-badge">✦ featured collection</div>
+        </div>
+
+        <!-- GALLERY -->
+        <h2 class="section-title">The <span class="gold">Collection</span></h2>
+
+        <!-- Tools -->
+        <div class="gallery-tools">
+            <div class="search-wrapper">
+                <input type="text" class="search-input" id="searchInput" placeholder="Search artworks..." />
+                <button class="search-clear" id="searchClear" aria-label="Clear search">&times;</button>
+                <i class="fas fa-search search-icon"></i>
+            </div>
+            <div class="filter-bar" id="filterBar">
+                <button class="filter-btn active" data-filter="all">All</button>
+                <button class="filter-btn" data-filter="Oil Pastel">Oil Pastel</button>
+                <button class="filter-btn" data-filter="Mixed">Mixed</button>
+                <button class="filter-btn" data-filter="Acrylic">Acrylic</button>
+                <button class="filter-btn" data-filter="Charcoal">Charcoal</button>
+            </div>
+            <button id="gridViewBtn" class="active-toggle" title="Grid view"><i class="fas fa-th"></i> Grid</button>
+            <button id="listViewBtn" title="List view"><i class="fas fa-list"></i> List</button>
+            <button id="shuffleBtn"><i class="fas fa-random"></i> Shuffle</button>
+            <button id="resetViewBtn"><i class="fas fa-th"></i> Reset</button>
+            <span class="stats" id="galleryStats"><span id="pieceCount">8</span> pieces · <span id="mediumCount">4</span> mediums</span>
+        </div>
+
+        <div class="no-results" id="noResults">
+            <i class="fas fa-search"></i> No artworks match your search.
+        </div>
+
+        <div class="gallery-grid" id="galleryGrid">
+            <!-- injected by JS -->
+        </div>
+
+        <!-- SKETCHBOOK -->
+        <div class="sketchbook-section" id="sketchbook">
+            <h2 class="section-title">Sketchbook <span class="gold">Studies</span></h2>
+            <p class="sketchbook-intro">
+                A glimpse into my creative process — <strong>raw, unpolished, and intimate</strong>. These pages hold the first sparks of ideas that later evolve into finished works. Each sketch is a conversation with curiosity.
+            </p>
+            <div class="sketchbook-grid" id="sketchbookGrid">
+                <!-- sketch 1 -->
+                <div class="sketchbook-item" data-sketch="Expose · 2025 December">
+                    <img src="P/Book/a.jpeg" alt="sketch 1" loading="lazy" />
+                    <div class="sketch-overlay">
+                        <span class="sketch-title">Expose · 2025 December</span>
+                        <button class="sketch-inquire" data-sketch="Expose · 2025 December">Inquire</button>
+                    </div>
+                </div>
+
+                <!-- sketch 2 -->
+                <div class="sketchbook-item" data-sketch="Doberman · 2026 May">
+                    <img src="P/Book/b.jpeg" alt="sketch 2" loading="lazy" />
+                    <div class="sketch-overlay">
+                        <span class="sketch-title">Doberman · 2026 May</span>
+                        <button class="sketch-inquire" data-sketch="Doberman · 2026 May">Inquire</button>
+                    </div>
+                </div>
+
+                <!-- sketch 3 -->
+                <div class="sketchbook-item" data-sketch="Vibe · 2025 October">
+                    <img src="P/Book/c.jpeg" alt="sketch 3" loading="lazy" />
+                    <div class="sketch-overlay">
+                        <span class="sketch-title">Vibe · 2025 October</span>
+                        <button class="sketch-inquire" data-sketch="Vibe · 2025 October">Inquire</button>
+                    </div>
+                </div>
+
+                <!-- sketch 4 -->
+                <div class="sketchbook-item" data-sketch="Vibe Redone · 2026 January">
+                    <img src="P/Book/d.jpeg" alt="sketch 4" loading="lazy" />
+                    <div class="sketch-overlay">
+                        <span class="sketch-title">Vibe Redone · 2026 January</span>
+                        <button class="sketch-inquire" data-sketch="Vibe Redone · 2026 January">Inquire</button>
+                    </div>
+                </div>
+
+                <!-- sketch 5 -->
+                <div class="sketchbook-item" data-sketch="Static · 2025 October">
+                    <img src="P/Book/e.jpeg" alt="sketch 5" loading="lazy" />
+                    <div class="sketch-overlay">
+                        <span class="sketch-title">Static · 2025 October</span>
+                        <button class="sketch-inquire" data-sketch="Static · 2025 October">Inquire</button>
+                    </div>
+                </div>
+
+                <!-- sketch 6 -->
+                <div class="sketchbook-item" data-sketch="Static Redone · 2025 November">
+                    <img src="P/Book/f.jpeg" alt="sketch 6" loading="lazy" />
+                    <div class="sketch-overlay">
+                        <span class="sketch-title">Static Redone · 2025 November</span>
+                        <button class="sketch-inquire" data-sketch="Static Redone · 2025 November">Inquire</button>
+                    </div>
+                </div>
+
+                <!-- sketch 7 -->
+                <div class="sketchbook-item" data-sketch="Tag · 2025 November">
+                    <img src="P/Book/g.jpeg" alt="sketch 7" loading="lazy" />
+                    <div class="sketch-overlay">
+                        <span class="sketch-title">Tag · 2025 November</span>
+                        <button class="sketch-inquire" data-sketch="Tag · 2025 November">Inquire</button>
+                    </div>
+                </div>
+
+                <!-- sketch 8 -->
+                <div class="sketchbook-item" data-sketch="Tag Redone · 2025 December">
+                    <img src="P/Book/h.jpeg" alt="sketch 8" loading="lazy" />
+                    <div class="sketch-overlay">
+                        <span class="sketch-title">Tag Redone · 2025 December</span>
+                        <button class="sketch-inquire" data-sketch="Tag Redone · 2025 December">Inquire</button>
+                    </div>
+                </div>
+
+                <!-- sketch 9 -->
+                <div class="sketchbook-item" data-sketch="The Grumpy Morning · 2025 November">
+                    <img src="P/Book/i.jpeg" alt="sketch 9" loading="lazy" />
+                    <div class="sketch-overlay">
+                        <span class="sketch-title">The Grumpy Morning · 2025 November</span>
+                        <button class="sketch-inquire" data-sketch="The Grumpy Morning · 2025 November">Inquire</button>
+                    </div>
+                </div>
+
+                <!-- sketch 10 -->
+                <div class="sketchbook-item" data-sketch="The Grumpy Morning Redone · 2026 June">
+                    <img src="P/Book/j.jpeg" alt="sketch 10" loading="lazy" />
+                    <div class="sketch-overlay">
+                        <span class="sketch-title">The Grumpy Morning Redone · 2026 June</span>
+                        <button class="sketch-inquire" data-sketch="The Grumpy Morning Redone · 2026 June">Inquire</button>
+                    </div>
+                </div>
+
+                <!-- sketch 11 -->
+                <div class="sketchbook-item" data-sketch="Playlist · 2025 November">
+                    <img src="P/Book/k.jpeg" alt="sketch 11" loading="lazy" />
+                    <div class="sketch-overlay">
+                        <span class="sketch-title">Playlist · 2025 November</span>
+                        <button class="sketch-inquire" data-sketch="Playlist · 2025 November">Inquire</button>
+                    </div>
+                </div>
+
+                <!-- sketch 12 -->
+                <div class="sketchbook-item" data-sketch="Sideline · 2025 November">
+                    <img src="P/Book/l.jpeg" alt="sketch 12" loading="lazy" />
+                    <div class="sketch-overlay">
+                        <span class="sketch-title">Sideline · 2025 November</span>
+                        <button class="sketch-inquire" data-sketch="Sideline · 2025 November">Inquire</button>
+                    </div>
+                </div>
+
+                <!-- sketch 13 -->
+                <div class="sketchbook-item" data-sketch="Bitter flower · 2026 June">
+                    <img src="P/Book/m.jpeg" alt="sketch 13" loading="lazy" />
+                    <div class="sketch-overlay">
+                        <span class="sketch-title">Bitter flower · 2026 June</span>
+                        <button class="sketch-inquire" data-sketch="Bitter flower · 2026 June">Inquire</button>
+                    </div>
+                </div>
+
+                <!-- sketch 14 -->
+                <div class="sketchbook-item" data-sketch="Provoke · 2026 January">
+                    <img src="P/Book/n.jpeg" alt="sketch 14" loading="lazy" />
+                    <div class="sketch-overlay">
+                        <span class="sketch-title">Provoke · 2026 January</span>
+                        <button class="sketch-inquire" data-sketch="Provoke · 2026 January">Inquire</button>
+                    </div>
+                </div>
+
+                <!-- sketch 15 -->
+                <div class="sketchbook-item" data-sketch="Heat · 2026 June">
+                    <img src="P/Book/o.jpeg" alt="sketch 15" loading="lazy" />
+                    <div class="sketch-overlay">
+                        <span class="sketch-title">Heat · 2026 June</span>
+                        <button class="sketch-inquire" data-sketch="Heat · 2026 June">Inquire</button>
+                    </div>
+                </div>
+
+                <!-- sketch 16 -->
+                <div class="sketchbook-item" data-sketch="Prey Pray · 2026 June">
+                    <img src="P/Book/p.jpeg" alt="sketch 16" loading="lazy" />
+                    <div class="sketch-overlay">
+                        <span class="sketch-title">Prey Pray · 2026 June</span>
+                        <button class="sketch-inquire" data-sketch="Prey Pray · 2026 June">Inquire</button>
+                    </div>
+                </div>
+
+                <!-- sketch 17 -->
+                <div class="sketchbook-item" data-sketch="Sparring · 2026 May">
+                    <img src="P/Book/q.jpeg" alt="sketch 17" loading="lazy" />
+                    <div class="sketch-overlay">
+                        <span class="sketch-title">Sparring · 2026 May</span>
+                        <button class="sketch-inquire" data-sketch="Sparring · 2026 May">Inquire</button>
+                    </div>
+                </div>
+
+                <!-- sketch 18 -->
+                <div class="sketchbook-item" data-sketch="Blueprint · 2026 June">
+                    <img src="P/Book/r.jpeg" alt="sketch 18" loading="lazy" />
+                    <div class="sketch-overlay">
+                        <span class="sketch-title">Blueprint · 2026 June</span>
+                        <button class="sketch-inquire" data-sketch="Blueprint · 2026 June">Inquire</button>
+                    </div>
+                </div>
+
+                <!-- sketch 19 -->
+                <div class="sketchbook-item" data-sketch="The King's Dream · 2026 February">
+                    <img src="P/Book/s.jpeg" alt="sketch 19" loading="lazy" />
+                    <div class="sketch-overlay">
+                        <span class="sketch-title">The King's Dream · 2026 February</span>
+                        <button class="sketch-inquire" data-sketch="The King's Dream · 2026 February">Inquire</button>
+                    </div>
+                </div>
+
+                <!-- sketch 20 -->
+                <div class="sketchbook-item" data-sketch="Spark Plug · 2026 February">
+                    <img src="P/Book/t.jpeg" alt="sketch 20" loading="lazy" />
+                    <div class="sketch-overlay">
+                        <span class="sketch-title">Spark Plug · 2026 February</span>
+                        <button class="sketch-inquire" data-sketch="Spark Plug · 2026 February">Inquire</button>
+                    </div>
+                </div>
+
+                <!-- sketch 21 -->
+                <div class="sketchbook-item" data-sketch="Piston · 2026 February">
+                    <img src="P/Book/u.jpeg" alt="sketch 21" loading="lazy" />
+                    <div class="sketch-overlay">
+                        <span class="sketch-title">Piston · 2026 February</span>
+                        <button class="sketch-inquire" data-sketch="Piston · 2026 February">Inquire</button>
+                    </div>
+                </div>
+
+                <!-- sketch 22 -->
+                <div class="sketchbook-item" data-sketch="Hellboy · 2025 November">
+                    <img src="P/Book/v.jpeg" alt="sketch 22" loading="lazy" />
+                    <div class="sketch-overlay">
+                        <span class="sketch-title">Hellboy · 2025 November</span>
+                        <button class="sketch-inquire" data-sketch="Hellboy · 2025 November">Inquire</button>
+                    </div>
+                </div>
+
+                <!-- sketch 23 -->
+                <div class="sketchbook-item" data-sketch="Brainfreezze · 2025 November">
+                    <img src="P/Book/w.jpeg" alt="sketch 23" loading="lazy" />
+                    <div class="sketch-overlay">
+                        <span class="sketch-title">Brainfreezze · 2025 November</span>
+                        <button class="sketch-inquire" data-sketch="Brainfreezze · 2025 November">Inquire</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ABOUT -->
+        <div class="about-section" id="about">
+            <div class="portrait-placeholder">
+                <img src="Image/PP.jpeg" alt="Nhlakanipho portrait" />
+            </div>
+            <div class="about-text">
+                <h2>— the <span class="gold">vision</span></h2>
+                <p>I am <strong>Nhlakanipho</strong> — a visual artist working at the intersection of memory, identity, and the quiet poetry of everyday life. My practice is rooted in the belief that art is a language spoken in colour, texture, and silence.</p>
+                <p>Each piece I create is a fragment of a larger story — a meditation on the spaces between people, the weight of unspoken words, and the beauty that emerges from imperfection. I work across oil, mixed media, and acrylic, always searching for the moment where pigment becomes feeling.</p>
+                <p>My journey as an artist is one of constant discovery. I draw inspiration from the landscapes of my childhood, the rhythm of urban life, and the deep well of human emotion that connects us all. For me, painting is not just a craft — it is a way of seeing, of being, and of sharing.</p>
+                <div class="commission-cta">
+                    <a href="https://wa.me/27665778966?text=Hello%2C%20I%20would%20like%20to%20commission%20a%20piece%20from%20Nhlaka%20the%20artist." target="_blank"><i class="fab fa-whatsapp"></i> Commission</a>
+                    <a href="mailto:minenhlengwenya155@gmail.com?subject=Commission%20Inquiry&body=Dear%20Nhlaka%2C%20I%20am%20interested%20in%20commissioning%20a%20work."><i class="fas fa-envelope"></i> Email</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- TESTIMONIALS -->
+        <div class="testimonials" id="testimonials">
+            <h2 class="section-title">What <span class="gold">Collectors</span> Say</h2>
+            <div class="testimonial-grid">
+                <div class="testimonial-card">
+                    <div class="quote">Nhlaka's work is... I love it, it speaks to me</div>
+                    <div class="attribution">— <span class="gold">Z.Mlambo</span>, Private Collection, Newcastle</div>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- FOOTER -->
+        <footer id="contact">
+            <div class="footer-inquiry">
+                <h4>Inquiries &amp; <span class="gold">collaborations</span></h4>
+                <p>For commissions, collectors, or simply to say hello — I'd love to hear from you.</p>
+                <div class="contact-links">
+                    <a href="mailto:minenhlengwenya155@gmail.com"><i class="fas fa-envelope"></i> minenhlengwenya155@gmail.com</a>
+                    <a href="https://wa.me/27665778966?text=Hello%2C%20I%20have%20a%20question%20about%20your%20artwork." target="_blank"><i class="fab fa-whatsapp"></i> WhatsApp: 066 577 8966</a>
+                    <a href="https://www.tiktok.com/@nhlaka_the_artist" target="_blank"><i class="fab fa-tiktok"></i> @nhlaka_the_artist</a>
+                </div>
+                <div class="footer-form">
+                    <input type="text" placeholder="Your name" id="footerName" />
+                    <input type="email" placeholder="Email" id="footerEmail" />
+                    <textarea placeholder="Tell me about your vision..." id="footerMessage"></textarea>
+                    <button type="button" id="sendInquiryBtn">Send</button>
+                </div>
+            </div>
+            <div>
+                <div class="newsletter">
+                    <p>Subscribe for studio updates</p>
+                    <div class="newsletter-input">
+                        <input type="email" placeholder="Enter your email" />
+                        <button>Subscribe</button>
+                    </div>
+                </div>
+                <div style="margin-top:2rem;font-size:0.6rem;color:rgba(245,240,235,0.08);letter-spacing:0.1em;">
+                    © 2026 Nhlaka the artist · All rights reserved
+                </div>
+            </div>
+            <div class="social-icons">
+                <a href="https://www.tiktok.com/@nhlaka_the_artist" target="_blank" aria-label="TikTok"><i class="fab fa-tiktok"></i></a>
+                <a href="#" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+                <a href="#" aria-label="Behance"><i class="fab fa-behance"></i></a>
+                <a href="#" aria-label="Pinterest"><i class="fab fa-pinterest"></i></a>
+            </div>
+        </footer>
+
+    </div>
+
+    <!-- ═══ SCROLL-TO-TOP BUTTON ═══ -->
+    <button class="scroll-top-btn" id="scrollTopBtn" aria-label="Scroll to top">
+        <i class="fas fa-arrow-up"></i>
+        <svg class="progress-ring" viewbox="0 0 52 52">
+            <circle cx="26" cy="26" r="22" />
+        </svg>
+    </button>
+
+    <!-- ═══ LIGHTBOX ═══ -->
+    <div class="lightbox" id="lightbox">
+        <span class="lightbox-close" id="lightboxClose">&times;</span>
+        <div class="lightbox-nav prev" id="lbPrev"><i class="fas fa-chevron-left"></i></div>
+        <div class="lightbox-nav next" id="lbNext"><i class="fas fa-chevron-right"></i></div>
+        <img class="lightbox-content" id="lightboxImg" src="#" alt="artwork enlarged" />
+        <div class="lightbox-caption" id="lightboxCaption">
+            <span class="lb-title" id="lbTitle">Title</span>
+            <span class="lb-date" id="lbDate">2026</span>
+            <span class="lb-series" id="lbSeries">Series</span>
+            <span class="lb-details" id="lbDetails">Medium, Dimensions</span>
+            <div class="color-palette" id="colorPalette"></div>
+        </div>
+        <div class="lightbox-story" id="lbStory">The story behind this piece…</div>
+        <div class="lightbox-actions">
+            <a href="#" id="whatsappInquire" target="_blank" class="hidden-action"><i class="fab fa-whatsapp"></i> Inquire</a>
+            <a href="#" id="emailInquire" target="_blank"><i class="fas fa-envelope"></i> Email</a>
+            <a href="#" id="shareLink" target="_blank"><i class="fas fa-share-alt"></i> Share</a>
+        </div>
+        <div class="lightbox-counter" id="lbCounter">1 / 8</div>
+        <div class="lightbox-shortcut-hint">← → navigate · ESC close · F fullscreen</div>
+    </div>
+
+    <script>
+        (function() {
+            'use strict';
+
+            // ─── ARTWORK DATA with status ───
+            const artworks = [{
+                title: 'Breath',
+                medium: 'Oil Pastel and Charcoal',
+                dimensions: '21 × 30 cm',
+                date: '2026 June',
+                series: 'Pigment and Ash',
+                category: 'Mixed',
+                status: 'sold', // available, sold, not-for-sale
+                backstory: 'This piece was created during a period of reflection and facing defeat',
+                img: 'P/Mixed/a.jpeg',
+                colors: ['#c4a882', '#8b7a6a', '#d4c4b0', '#6a5f55']
+            }, {
+                title: 'Vanguard',
+                medium: 'Oil Pastel and Charcoal',
+                dimensions: '30 × 42 cm',
+                date: '2025 June',
+                series: 'Pigment and Ash',
+                category: 'Mixed',
+                status: 'available',
+                backstory: 'Inspired by unleashing my inner beast, this is a artwork signifying how far I have come',
+                img: 'P/Mixed/b.jpeg',
+                colors: ['#6a7a7a', '#8a9a8a', '#b0b8b0', '#5a6a5a']
+            }, {
+                title: 'Unchained',
+                medium: 'Oil Pastel',
+                dimensions: '21 × 30 cm',
+                date: '2026 April',
+                series: 'Messy',
+                category: 'Oil Pastel',
+                status: 'available',
+                backstory: 'This is actually my first oil pastel artwork and were mixed medium begun for me.',
+                img: 'P/Oil/c.jpeg',
+                colors: ['#8a7a6a', '#b8a898', '#5a4a3a', '#c8b8a8']
+            }, {
+                title: 'I Am King',
+                medium: 'Oil Pastel',
+                dimensions: '30 × 42 cm',
+                date: '2026 May',
+                series: 'Pigment and Ash',
+                category: 'Oil Pastel',
+                status: 'available',
+                backstory: 'This artwork is very important to me I feel it is the artwork that Pulled everything together.',
+                img: 'P/Oil/a.jpeg',
+                colors: ['#1a1a1a', '#3a3a3a', '#5a4a3a', '#8a7a6a']
+            }, {
+                title: 'Impact',
+                medium: 'Oil Pastel',
+                dimensions: '30 × 21 cm',
+                date: '2026 March',
+                series: '',
+                category: 'Oil Pastel',
+                status: 'available',
+                backstory: 'Captured in the explosive fracton of a second, strategy meets execution.',
+                img: 'P/Oil/b.jpeg',
+                colors: ['#2a2a2a', '#4a4a4a', '#6a5a4a', '#8a7a6a']
+            }, {
+                title: 'Netha',
+                medium: 'Graphite and Charcoal',
+                dimensions: '21 × 30 cm',
+                date: '2025 October',
+                series: '',
+                category: 'Charcoal',
+                status: 'not-for-sale',
+                backstory: 'My first Professional artwork',
+                img: 'P/Charcoal/a.jpeg',
+                colors: ['#c8a060', '#d4b878', '#e8c898', '#b09050']
+            }, {
+                title: 'Mtimande',
+                medium: 'Graphite and Charcoal',
+                dimensions: '21 × 30 cm',
+                date: '2026 May',
+                series: '',
+                category: 'Charcoal',
+                status: 'not-for-sale',
+                backstory: '',
+                img: 'P/Charcoal/b.jpeg',
+                colors: ['#c8a060', '#d4b878', '#e8c898', '#b09050']
+            }, {
+                title: 'Baby Steps',
+                medium: 'Graphite and Charcoal',
+                dimensions: '21 × 30 cm',
+                date: '2026 March',
+                series: 'Charcoal on Paper',
+                category: 'Charcoal',
+                status: 'available',
+                backstory: 'I pair this piece with unchained and breath as they are all part of my favourite animal. This piece is about the first steps of a journey and the courage it takes to take them.',
+                img: 'P/Charcoal/c.jpeg',
+                colors: ['#c8a060', '#d4b878', '#e8c898', '#b09050']
+            }, {
+                title: 'Ngelosi',
+                medium: 'Graphite and Charcoal',
+                dimensions: '21 × 30 cm',
+                date: '2026 March',
+                series: '',
+                category: 'Charcoal',
+                status: 'not-for-sale',
+                backstory: 'The angel to many souls',
+                img: 'P/Charcoal/d.jpeg',
+                colors: ['#c8a060', '#d4b878', '#e8c898', '#b09050']
+            }, {
+                title: 'Thalitha',
+                medium: 'Graphite and Charcoal',
+                dimensions: '21 × 30 cm',
+                date: '2026 March',
+                series: '',
+                category: 'Charcoal',
+                status: 'not-for-sale',
+                backstory: '',
+                img: 'P/Charcoal/e.jpeg',
+                colors: ['#c8a060', '#d4b878', '#e8c898', '#b09050']
+            }, {
+                title: 'Big bro and big niece',
+                medium: 'Graphite and Charcoal',
+                dimensions: '30 × 21 cm',
+                date: '2026 March',
+                series: '',
+                category: 'Charcoal',
+                status: 'not-for-sale',
+                backstory: '',
+                img: 'P/Charcoal/f.jpeg',
+                colors: ['#c8a060', '#d4b878', '#e8c898', '#b09050']
+            }, {
+                title: 'Thando',
+                medium: 'Graphite and Charcoal',
+                dimensions: '21 × 30 cm',
+                date: '2026 March',
+                series: '',
+                category: 'Charcoal',
+                status: 'not-for-sale',
+                backstory: '',
+                img: 'P/Charcoal/g.jpeg',
+                colors: ['#c8a060', '#d4b878', '#e8c898', '#b09050']
+            }, {
+                title: 'Lwaziiii',
+                medium: 'Graphite and Charcoal',
+                dimensions: '21 × 30 cm',
+                date: '2026 March',
+                series: '',
+                category: 'Charcoal',
+                status: 'not-for-sale',
+                backstory: '',
+                img: 'P/Charcoal/h.jpeg',
+                colors: ['#c8a060', '#d4b878', '#e8c898', '#b09050']
+            }, {
+                title: 'Msobozeli',
+                medium: 'Graphite and Charcoal',
+                dimensions: '21 × 30 cm',
+                date: '2025 March',
+                series: '',
+                category: 'Charcoal',
+                status: 'not-for-sale',
+                backstory: '',
+                img: 'P/Charcoal/i.jpeg',
+                colors: ['#c8a060', '#d4b878', '#e8c898', '#b09050']
+            }, {
+                title: 'Grit',
+                medium: 'Graphite and Charcoal',
+                dimensions: '21 × 30 cm',
+                date: '2026 March',
+                series: 'Charcoal on Paper',
+                category: 'Charcoal',
+                status: 'available',
+                backstory: 'This artwork toke me a full year to finish so it also has a deep meaning to my ark journy.',
+                img: 'P/Charcoal/j.jpeg',
+                colors: ['#c8a060', '#d4b878', '#e8c898', '#b09050']
+            }, {
+                title: 'Titan bull',
+                medium: 'Graphite and Charcoal',
+                dimensions: '21 × 30 cm',
+                date: '2025 November',
+                series: 'Charcoal on Paper',
+                category: 'Charcoal',
+                status: 'available',
+                backstory: 'My art cover, from where I come from bulls represent strength.fertility and endurance which I lack for now ',
+                img: 'P/Charcoal/k.jpeg',
+                colors: ['#c8a060', '#d4b878', '#e8c898', '#b09050']
+            }, {
+                title: 'Makhumalo',
+                medium: 'Graphite and Charcoal',
+                dimensions: '21 × 30 cm',
+                date: '2025 November',
+                series: '',
+                category: 'Charcoal',
+                status: 'not-for-sale',
+                backstory: 'this is my Portal to the dirty world',
+                img: 'P/Charcoal/l.jpeg',
+                colors: ['#c8a060', '#d4b878', '#e8c898', '#b09050']
+            }, {
+                title: 'Mntungwa',
+                medium: 'Graphite and Charcoal',
+                dimensions: '21 × 30 cm',
+                date: '2026 February',
+                series: '',
+                category: 'Charcoal',
+                status: 'not-for-sale',
+                backstory: 'Left us too soon',
+                img: 'P/Charcoal/n.jpeg',
+                colors: ['#c8a060', '#d4b878', '#e8c898', '#b09050']
+            }, {
+                title: 'Ngwenya',
+                medium: 'Graphite and Charcoal',
+                dimensions: '21 × 30 cm',
+                date: '2025 November',
+                series: '',
+                category: 'Charcoal',
+                status: 'not-for-sale',
+                backstory: '.',
+                img: 'P/Charcoal/m.jpeg',
+                colors: ['#c8a060', '#d4b878', '#e8c898', '#b09050']
+            }];
+
+            // ─── DOM REFS ───
+            const grid = document.getElementById('galleryGrid');
+            const lightbox = document.getElementById('lightbox');
+            const lightboxImg = document.getElementById('lightboxImg');
+            const lbTitle = document.getElementById('lbTitle');
+            const lbDetails = document.getElementById('lbDetails');
+            const lbDate = document.getElementById('lbDate');
+            const lbSeries = document.getElementById('lbSeries');
+            const lbStory = document.getElementById('lbStory');
+            const lbCounter = document.getElementById('lbCounter');
+            const colorPalette = document.getElementById('colorPalette');
+            const closeBtn = document.getElementById('lightboxClose');
+            const prevBtn = document.getElementById('lbPrev');
+            const nextBtn = document.getElementById('lbNext');
+            // Lightbox action buttons
+            const whatsappBtn = document.getElementById('whatsappInquire');
+            const emailLink = document.getElementById('emailInquire');
+            const shareLinkEl = document.getElementById('shareLink');
+            const filterBar = document.getElementById('filterBar');
+            const filterBtns = filterBar.querySelectorAll('.filter-btn');
+            const shuffleBtn = document.getElementById('shuffleBtn');
+            const resetViewBtn = document.getElementById('resetViewBtn');
+            const gridViewBtn = document.getElementById('gridViewBtn');
+            const listViewBtn = document.getElementById('listViewBtn');
+            const searchInput = document.getElementById('searchInput');
+            const searchClear = document.getElementById('searchClear');
+            const noResults = document.getElementById('noResults');
+            const pieceCount = document.getElementById('pieceCount');
+            const mediumCount = document.getElementById('mediumCount');
+            const scrollTopBtn = document.getElementById('scrollTopBtn');
+            const heroImage = document.getElementById('heroImage');
+            const heroSection = document.getElementById('heroSection');
+            const hamburgerBtn = document.getElementById('hamburgerBtn');
+            const mobileMenu = document.getElementById('mobileMenu');
+            const mobileOverlay = document.getElementById('mobileOverlay');
+            const sendInquiryBtn = document.getElementById('sendInquiryBtn');
+            const footerName = document.getElementById('footerName');
+            const footerEmail = document.getElementById('footerEmail');
+            const footerMessage = document.getElementById('footerMessage');
+            const sketchbookItems = document.querySelectorAll('.sketchbook-item');
+            const sketchInquireBtns = document.querySelectorAll('.sketch-inquire');
+
+            let currentItems = [...artworks];
+            let currentIndex = 0;
+            let isShuffled = false;
+            let isListView = false;
+            let searchTerm = '';
+            let isSketchbookMode = false; // flag for lightbox mode
+
+            // ─── PARTICLES ───
+            const canvas = document.getElementById('particles-canvas');
+            const ctx = canvas.getContext('2d');
+            let particles = [];
+            let w, h;
+
+            function resizeCanvas() {
+                w = canvas.width = window.innerWidth;
+                h = canvas.height = window.innerHeight;
+            }
+            resizeCanvas();
+            window.addEventListener('resize', resizeCanvas);
+
+            class Particle {
+                constructor() {
+                    this.reset();
+                }
+                reset() {
+                    this.x = Math.random() * w;
+                    this.y = Math.random() * h;
+                    this.size = Math.random() * 3 + 1.5;
+                    this.speedX = (Math.random() - 0.5) * 0.3;
+                    this.speedY = (Math.random() - 0.5) * 0.3;
+                    this.opacity = Math.random() * 0.25 + 0.05;
+                    this.life = Math.random() * 200 + 100;
+                    this.maxLife = this.life;
+                }
+                update() {
+                    this.x += this.speedX + Math.sin(this.y * 0.001) * 0.05;
+                    this.y += this.speedY + Math.cos(this.x * 0.001) * 0.05;
+                    this.life--;
+                    if (this.life < 0 || this.x < 0 || this.x > w || this.y < 0 || this.y > h) {
+                        this.reset();
+                        this.life = this.maxLife;
+                    }
+                    this.opacity = (this.life / this.maxLife) * 0.2 + 0.02;
+                }
+                draw() {
+                    ctx.beginPath();
+                    ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                    ctx.fillStyle = `rgba(184, 164, 140, ${this.opacity})`;
+                    ctx.fill();
+                    ctx.shadowColor = 'rgba(184, 164, 140, 0.05)';
+                    ctx.shadowBlur = 10;
+                }
+            }
+
+            for (let i = 0; i < 80; i++) {
+                particles.push(new Particle());
+            }
+
+            function animateParticles() {
+                ctx.clearRect(0, 0, w, h);
+                particles.forEach(p => {
+                    p.update();
+                    p.draw();
+                });
+                requestAnimationFrame(animateParticles);
+            }
+            animateParticles();
+
+            // ─── RENDER GALLERY ───
+            function renderGallery(items) {
+                grid.innerHTML = '';
+                if (items.length === 0) {
+                    noResults.classList.add('visible');
+                } else {
+                    noResults.classList.remove('visible');
+                }
+                items.forEach((art, index) => {
+                    const item = document.createElement('div');
+                    item.className = 'gallery-item';
+                    item.setAttribute('data-index', index);
+                    item.setAttribute('data-title', art.title);
+
+                    const wrapper = document.createElement('div');
+                    wrapper.className = 'img-wrapper';
+
+                    const img = document.createElement('img');
+                    img.src = art.img;
+                    img.alt = art.title;
+                    img.loading = 'lazy';
+
+                    const overlay = document.createElement('div');
+                    overlay.className = 'hover-overlay';
+                    overlay.innerHTML = `<span>✦ view details</span>`;
+
+                    // Status badge — themed
+                    const statusBadge = document.createElement('div');
+                    statusBadge.className = 'status-badge';
+                    if (art.status === 'sold') {
+                        statusBadge.classList.add('sold');
+                        statusBadge.textContent = 'Sold';
+                    } else if (art.status === 'not-for-sale') {
+                        statusBadge.classList.add('not-for-sale');
+                        statusBadge.textContent = 'Not for Sale';
+                    } else {
+                        statusBadge.classList.add('available');
+                        statusBadge.textContent = 'Available';
+                    }
+
+                    wrapper.appendChild(img);
+                    wrapper.appendChild(overlay);
+                    wrapper.appendChild(statusBadge);
+                    item.appendChild(wrapper);
+
+                    const cap = document.createElement('div');
+                    cap.className = 'caption';
+
+                    // Conditionally render inquiry badge ONLY for available
+                    let inquiryHtml = '';
+                    if (art.status === 'available') {
+                        inquiryHtml = `<span class="inquiry-badge" data-idx="${index}">Inquire</span>`;
+                    }
+
+                    cap.innerHTML = `
+                        <span>
+                            <span class="title">${art.title}</span>
+                            <span class="meta">${art.medium}<span class="sep">·</span>${art.dimensions}</span>
+                        </span>
+                        ${inquiryHtml}
+                    `;
+                    item.appendChild(cap);
+                    grid.appendChild(item);
+
+                    // 3D tilt
+                    item.addEventListener('mousemove', function(e) {
+                        if (isListView) return;
+                        const rect = this.getBoundingClientRect();
+                        const x = (e.clientX - rect.left) / rect.width - 0.5;
+                        const y = (e.clientY - rect.top) / rect.height - 0.5;
+                        this.style.transform =
+                            `perspective(800px) rotateY(${x * 6}deg) rotateX(${-y * 6}deg) translateY(-6px)`;
+                    });
+                    item.addEventListener('mouseleave', function() {
+                        if (isListView) return;
+                        this.style.transform =
+                            'perspective(800px) rotateY(0deg) rotateX(0deg) translateY(0px)';
+                    });
+
+                    item.addEventListener('click', function(e) {
+                        const idx = parseInt(this.getAttribute('data-index'), 10);
+                        openGalleryLightbox(idx);
+                    });
+
+                    const badge = cap.querySelector('.inquiry-badge');
+                    if (badge) {
+                        badge.addEventListener('click', function(e) {
+                            e.stopPropagation();
+                            const idx = parseInt(this.getAttribute('data-idx'), 10);
+                            openGalleryLightbox(idx);
+                        });
+                    }
+                });
+
+                updateStats(items);
+            }
+
+            // ─── FILTER + SEARCH ───
+            function getFilteredItems() {
+                const activeBtn = document.querySelector('.filter-btn.active');
+                const filter = activeBtn ? activeBtn.getAttribute('data-filter') : 'all';
+                let items = filter === 'all' ? [...artworks] : artworks.filter(a => a.category === filter);
+                if (searchTerm.trim()) {
+                    const term = searchTerm.toLowerCase().trim();
+                    items = items.filter(a =>
+                        a.title.toLowerCase().includes(term) ||
+                        a.medium.toLowerCase().includes(term) ||
+                        a.series.toLowerCase().includes(term) ||
+                        a.backstory.toLowerCase().includes(term) ||
+                        a.category.toLowerCase().includes(term) ||
+                        a.dimensions.toLowerCase().includes(term)
+                    );
+                }
+                if (isShuffled) {
+                    items = shuffleArray(items);
+                }
+                return items;
+            }
+
+            function applyFilters() {
+                currentItems = getFilteredItems();
+                renderGallery(currentItems);
+                if (lightbox.classList.contains('active') && !isSketchbookMode) {
+                    if (currentIndex >= currentItems.length) closeLightbox();
+                }
+            }
+
+            function updateStats(items) {
+                const itms = items || currentItems;
+                const unique = new Set(itms.map(a => a.category));
+                const pc = document.getElementById('pieceCount');
+                const mc = document.getElementById('mediumCount');
+                if (pc.textContent !== String(itms.length)) {
+                    pc.classList.add('pulse');
+                    setTimeout(() => pc.classList.remove('pulse'), 600);
+                }
+                pc.textContent = itms.length;
+                mc.textContent = unique.size;
+            }
+
+            function shuffleArray(arr) {
+                const a = [...arr];
+                for (let i = a.length - 1; i > 0; i--) {
+                    const j = Math.floor(Math.random() * (i + 1));
+                    [a[i], a[j]] = [a[j], a[i]];
+                }
+                return a;
+            }
+
+            // ─── FILTER BUTTONS ───
+            filterBtns.forEach(btn => {
+                btn.addEventListener('click', function() {
+                    filterBtns.forEach(b => b.classList.remove('active'));
+                    this.classList.add('active');
+                    applyFilters();
+                });
+            });
+
+            // ─── SEARCH ───
+            searchInput.addEventListener('input', function() {
+                searchTerm = this.value;
+                if (searchTerm.trim()) {
+                    searchClear.classList.add('visible');
+                } else {
+                    searchClear.classList.remove('visible');
+                }
+                applyFilters();
+            });
+            searchClear.addEventListener('click', function() {
+                searchInput.value = '';
+                searchTerm = '';
+                searchClear.classList.remove('visible');
+                applyFilters();
+                searchInput.focus();
+            });
+
+            // ─── VIEW TOGGLE ───
+            gridViewBtn.addEventListener('click', function() {
+                isListView = false;
+                grid.classList.remove('list-view');
+                this.classList.add('active-toggle');
+                listViewBtn.classList.remove('active-toggle');
+                showToast('Switched to grid view', 'fas fa-th');
+            });
+            listViewBtn.addEventListener('click', function() {
+                isListView = true;
+                grid.classList.add('list-view');
+                this.classList.add('active-toggle');
+                gridViewBtn.classList.remove('active-toggle');
+                showToast('Switched to list view', 'fas fa-list');
+            });
+
+            // ─── SHUFFLE ───
+            shuffleBtn.addEventListener('click', function() {
+                isShuffled = !isShuffled;
+                this.style.color = isShuffled ? 'var(--gold-light)' : 'rgba(245,240,235,0.3)';
+                if (isShuffled) {
+                    this.classList.add('active-toggle');
+                } else {
+                    this.classList.remove('active-toggle');
+                }
+                applyFilters();
+                if (isShuffled) showToast('Collection shuffled', 'fas fa-random');
+                else showToast('Original order restored', 'fas fa-sort-amount-down');
+            });
+
+            // ─── RESET ───
+            resetViewBtn.addEventListener('click', function() {
+                isShuffled = false;
+                searchTerm = '';
+                searchInput.value = '';
+                searchClear.classList.remove('visible');
+                shuffleBtn.style.color = 'rgba(245,240,235,0.3)';
+                shuffleBtn.classList.remove('active-toggle');
+                document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+                document.querySelector('.filter-btn[data-filter="all"]').classList.add('active');
+                applyFilters();
+                showToast('View reset to default', 'fas fa-redo');
+            });
+
+            // ─── TOAST ───
+            function showToast(message, iconClass = 'fas fa-check', duration = 3300) {
+                const container = document.getElementById('toastContainer');
+                const toast = document.createElement('div');
+                toast.className = 'toast';
+                toast.innerHTML = `<i class="${iconClass}"></i> ${message}`;
+                container.appendChild(toast);
+                setTimeout(() => {
+                    if (toast.parentNode) toast.remove();
+                }, duration + 500);
+            }
+
+            // ─── LIGHTBOX (shared) ───
+            function openLightbox(src, title, isSketch = false) {
+                isSketchbookMode = isSketch;
+                lightboxImg.src = src;
+                lightboxImg.alt = title || 'Image';
+                lbTitle.textContent = title || 'Untitled';
+
+                // Show/hide elements based on mode
+                if (isSketch) {
+                    lbDetails.textContent = '';
+                    lbDate.textContent = '';
+                    lbSeries.textContent = '';
+                    lbStory.textContent = '';
+                    colorPalette.innerHTML = '';
+                    // Hide navigation for sketchbook (no prev/next)
+                    prevBtn.style.display = 'none';
+                    nextBtn.style.display = 'none';
+                    // Hide counter
+                    lbCounter.textContent = '';
+                    // Hide actions (email & share) for sketches
+                    document.querySelector('.lightbox-actions').style.display = 'none';
+                    // Hide shortcut hint
+                    document.querySelector('.lightbox-shortcut-hint').style.display = 'none';
+                } else {
+                    // Gallery mode - show all
+                    prevBtn.style.display = 'flex';
+                    nextBtn.style.display = 'flex';
+                    document.querySelector('.lightbox-actions').style.display = 'flex';
+                    document.querySelector('.lightbox-shortcut-hint').style.display = 'block';
+                    // details will be set by the calling function (openGalleryLightbox)
+                }
+
+                lightbox.classList.add('active');
+                document.body.style.overflow = 'hidden';
+            }
+
+            function closeLightbox() {
+                lightbox.classList.remove('active');
+                document.body.style.overflow = '';
+                isSketchbookMode = false;
+                // Reset visibility for next open
+                prevBtn.style.display = 'flex';
+                nextBtn.style.display = 'flex';
+                document.querySelector('.lightbox-actions').style.display = 'flex';
+                document.querySelector('.lightbox-shortcut-hint').style.display = 'block';
+            }
+
+            // ─── GALLERY LIGHTBOX ───
+            function openGalleryLightbox(index) {
+                if (index < 0 || index >= currentItems.length) return;
+                currentIndex = index;
+                const art = currentItems[index];
+                // Set details
+                lbDetails.textContent = `${art.medium}, ${art.dimensions}`;
+                lbDate.textContent = art.date;
+                lbSeries.textContent = art.series ? `✦ ${art.series}` : '';
+                lbStory.textContent = art.backstory || 'No story available for this piece.';
+                lbCounter.textContent = `${index + 1} / ${currentItems.length}`;
+
+                colorPalette.innerHTML = '';
+                if (art.colors && art.colors.length) {
+                    art.colors.forEach(c => {
+                        const swatch = document.createElement('span');
+                        swatch.className = 'color-swatch';
+                        swatch.style.backgroundColor = c;
+                        swatch.setAttribute('data-color', c);
+                        swatch.innerHTML = `<span class="tooltip">${c}</span>`;
+                        swatch.addEventListener('click', function(e) {
+                            e.stopPropagation();
+                            navigator.clipboard.writeText(c).then(() => {
+                                showToast(`Color ${c} copied to clipboard`, 'fas fa-palette');
+                            }).catch(() => {});
+                        });
+                        colorPalette.appendChild(swatch);
+                    });
+                }
+
+                // WhatsApp inquire – only for available
+                if (art.status === 'available') {
+                    whatsappBtn.classList.remove('hidden-action');
+                    const msg =
+                        `Hello%2C%20I%20am%20interested%20in%20the%20artwork%20%22${encodeURIComponent(art.title)}%22%20(${encodeURIComponent(art.medium)}%2C%20${encodeURIComponent(art.dimensions)}%2C%20${encodeURIComponent(art.date)})%20by%20Nhlaka%20the%20artist.`;
+                    whatsappBtn.href = `https://wa.me/27665778966?text=${msg}`;
+                } else {
+                    whatsappBtn.classList.add('hidden-action');
+                }
+
+                // Email and share links
+                const subject = `Inquiry about ${encodeURIComponent(art.title)}`;
+                const body =
+                    `Dear Nhlaka,%0A%0AI am interested in the piece "${encodeURIComponent(art.title)}" (${encodeURIComponent(art.medium)}, ${encodeURIComponent(art.dimensions)}, ${encodeURIComponent(art.date)}).%0A%0A${encodeURIComponent(art.backstory || '')}`;
+                emailLink.href =
+                    `mailto:minenhlengwenya155@gmail.com?subject=${subject}&body=${body}`;
+
+                shareLinkEl.href =
+                    `https://twitter.com/intent/tweet?text=Check%20out%20%22${encodeURIComponent(art.title)}%22%20by%20Nhlaka%20the%20artist&url=${encodeURIComponent(window.location.href)}`;
+
+                openLightbox(art.img, art.title, false);
+            }
+
+            // ─── SKETCHBOOK LIGHTBOX ───
+            function openSketchLightbox(src, title) {
+                openLightbox(src, title, true);
+            }
+
+            // ─── NAVIGATION ───
+            function goPrev() {
+                if (isSketchbookMode || currentItems.length === 0) return;
+                const newIdx = (currentIndex - 1 + currentItems.length) % currentItems.length;
+                openGalleryLightbox(newIdx);
+            }
+
+            function goNext() {
+                if (isSketchbookMode || currentItems.length === 0) return;
+                const newIdx = (currentIndex + 1) % currentItems.length;
+                openGalleryLightbox(newIdx);
+            }
+
+            closeBtn.addEventListener('click', closeLightbox);
+            lightbox.addEventListener('click', function(e) {
+                if (e.target === lightbox) closeLightbox();
+            });
+            prevBtn.addEventListener('click', goPrev);
+            nextBtn.addEventListener('click', goNext);
+
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'Escape') {
+                    if (lightbox.classList.contains('active')) {
+                        closeLightbox();
+                    } else if (mobileMenu.classList.contains('active')) {
+                        closeMobileMenu();
+                    }
+                }
+                if (e.key === 'ArrowLeft' && lightbox.classList.contains('active') && !isSketchbookMode) goPrev();
+                if (e.key === 'ArrowRight' && lightbox.classList.contains('active') && !isSketchbookMode) goNext();
+                if (e.key === 'f' && lightbox.classList.contains('active')) {
+                    if (document.fullscreenElement) {
+                        document.exitFullscreen();
+                    } else {
+                        document.body.requestFullscreen().catch(() => {});
+                    }
+                }
+                if (e.key === '/' && !lightbox.classList.contains('active') && document.activeElement !==
+                    searchInput) {
+                    e.preventDefault();
+                    searchInput.focus();
+                }
+            });
+
+            // ─── SKETCHBOOK CLICK ───
+            sketchbookItems.forEach(item => {
+                item.addEventListener('click', function(e) {
+                    // Don't trigger if clicked on inquire button
+                    if (e.target.classList.contains('sketch-inquire')) return;
+                    const img = this.querySelector('img');
+                    const overlay = this.querySelector('.sketch-overlay');
+                    const title = overlay ? overlay.querySelector('.sketch-title')?.textContent.trim() :
+                        'Sketch';
+                    if (img) {
+                        openSketchLightbox(img.src, title);
+                    }
+                });
+            });
+
+            // ─── MOBILE MENU ───
+            function openMobileMenu() {
+                mobileMenu.classList.add('active');
+                mobileOverlay.classList.add('active');
+                hamburgerBtn.classList.add('active');
+                document.body.style.overflow = 'hidden';
+            }
+
+            function closeMobileMenu() {
+                mobileMenu.classList.remove('active');
+                mobileOverlay.classList.remove('active');
+                hamburgerBtn.classList.remove('active');
+                document.body.style.overflow = '';
+            }
+            hamburgerBtn.addEventListener('click', function() {
+                if (mobileMenu.classList.contains('active')) {
+                    closeMobileMenu();
+                } else {
+                    openMobileMenu();
+                }
+            });
+            mobileOverlay.addEventListener('click', closeMobileMenu);
+            mobileMenu.querySelectorAll('a').forEach(link => {
+                link.addEventListener('click', function() {
+                    closeMobileMenu();
+                    const href = this.getAttribute('href');
+                    if (href && href.startsWith('#')) {
+                        const target = document.querySelector(href);
+                        if (target) {
+                            setTimeout(() => {
+                                target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                            }, 350);
+                        }
+                    }
+                });
+            });
+
+            document.querySelectorAll('nav a, .logo').forEach(link => {
+                link.addEventListener('click', function(e) {
+                    const href = this.getAttribute('href');
+                    if (href && href.startsWith('#')) {
+                        e.preventDefault();
+                        const target = document.querySelector(href);
+                        if (target) {
+                            target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                            document.querySelectorAll('nav a').forEach(l => l.classList.remove(
+                            'active'));
+                            this.classList.add('active');
+                        }
+                    }
+                });
+            });
+
+            // ─── SCROLL-TO-TOP ───
+            function updateScrollTopBtn() {
+                const scrollY = window.scrollY;
+                const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+                const progress = docHeight > 0 ? Math.min(scrollY / docHeight, 1) : 0;
+                const circle = scrollTopBtn.querySelector('circle');
+                const circumference = 138;
+                circle.style.strokeDashoffset = circumference - progress * circumference;
+
+                if (scrollY > 400) {
+                    scrollTopBtn.classList.add('visible');
+                } else {
+                    scrollTopBtn.classList.remove('visible');
+                }
+            }
+            scrollTopBtn.addEventListener('click', function() {
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            });
+            window.addEventListener('scroll', updateScrollTopBtn, { passive: true });
+
+            // ─── PARALLAX HERO ───
+            function updateParallax() {
+                const scrollY = window.scrollY;
+                const heroRect = heroSection.getBoundingClientRect();
+                if (heroRect.bottom > 0 && heroRect.top < window.innerHeight) {
+                    const offset = scrollY * 0.15;
+                    heroImage.style.transform = `translateY(${offset}px) scale(1.02)`;
+                }
+            }
+            window.addEventListener('scroll', updateParallax, { passive: true });
+
+            // ─── INQUIRY FORM ───
+            sendInquiryBtn.addEventListener('click', function() {
+                const name = footerName.value.trim();
+                const email = footerEmail.value.trim();
+                const message = footerMessage.value.trim();
+                if (!message) {
+                    showToast('Please write a message.', 'fas fa-exclamation-circle');
+                    return;
+                }
+                showToast('Inquiry sent! I will respond soon.', 'fas fa-paper-plane');
+                footerName.value = '';
+                footerEmail.value = '';
+                footerMessage.value = '';
+            });
+
+            // ─── SKETCHBOOK INQUIRY ───
+            sketchInquireBtns.forEach(btn => {
+                btn.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    const sketchName = this.getAttribute('data-sketch') || 'a sketch';
+                    const msg =
+                        `Hello%2C%20I%20am%20interested%20in%20the%20sketch%20%22${encodeURIComponent(sketchName)}%22%20by%20Nhlaka%20the%20artist.`;
+                    window.open(`https://wa.me/27665778966?text=${msg}`, '_blank');
+                });
+            });
+
+            // ─── NATURE SLIDESHOW ───
+            const slides = document.querySelectorAll('#bgSlideshow .slide');
+            let slideIdx = 0;
+            setInterval(() => {
+                slides.forEach(s => s.classList.remove('active'));
+                slideIdx = (slideIdx + 1) % slides.length;
+                slides[slideIdx].classList.add('active');
+            }, 10000);
+
+            // ─── LOADING SCREEN ───
+            const loader = document.getElementById('loader');
+            const progressBar = document.getElementById('progressBar');
+            let progress = 0;
+
+            function simulateLoad() {
+                const interval = setInterval(() => {
+                    progress += Math.random() * 8 + 2;
+                    if (progress >= 100) {
+                        progress = 100;
+                        clearInterval(interval);
+                        setTimeout(() => {
+                            loader.classList.add('hidden');
+                            document.body.style.overflow = '';
+                            document.querySelectorAll('.gallery-item').forEach((el, i) => {
+                                el.style.animationDelay = (i * 0.06) + 's';
+                            });
+                        }, 500);
+                    }
+                    progressBar.style.width = Math.min(progress, 100) + '%';
+                }, 200);
+            }
+            simulateLoad();
+
+            // ─── INIT ───
+            applyFilters();
+            updateScrollTopBtn();
+
+            // ─── INTERSECTION OBSERVER ───
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.style.opacity = '1';
+                        entry.target.style.transform = 'translateY(0)';
+                    }
+                });
+            }, { threshold: 0.1 });
+
+            document.querySelectorAll('.about-section, .testimonials, footer, .sketchbook-section').forEach(el => {
+                el.style.opacity = '0';
+                el.style.transform = 'translateY(30px)';
+                el.style.transition = 'opacity 0.8s ease, transform 0.8s ease';
+                observer.observe(el);
+            });
+
+            // ─── CONSOLE WELCOME ───
+            console.log('%c✦ Nhlaka the artist · Atelier ✦',
+                'font-family: Playfair Display, serif; font-size: 20px; color: #b8a48c;');
+            console.log('%cWith sketchbook lightbox and standard cursor.',
+                'font-family: Inter, sans-serif; font-size: 12px; color: #8a7a66;');
+            console.log('╔══════════════════════════════════════╗');
+            console.log('║  ✦  Keyboard Shortcuts  ✦          ║');
+            console.log('║  ←  →  navigate lightbox           ║');
+            console.log('║  ESC  close lightbox / menu        ║');
+            console.log('║  F    toggle fullscreen             ║');
+            console.log('║  /    focus search bar              ║');
+            console.log('╚══════════════════════════════════════╝');
+
+        })();
+    </script>
+</body>
+</html>
